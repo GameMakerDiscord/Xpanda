@@ -123,7 +123,10 @@ def expand(file, xshaders, lang):
                         if level == 0:
                             data += "// include(\"{}\")\n".format(include_fname)
                 else:
-                    data += handle_compatibility(l, lang)
+                    if level != 0:
+                        data += handle_compatibility(l, lang)
+                    else:
+                        data += l
 
     do_expand(file)
 
