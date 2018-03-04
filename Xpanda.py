@@ -49,7 +49,6 @@ def handle_compatibility(string, lang):
         }
     elif lang.startswith("hlsl"):
         names = {
-            "Texture2D": "Texture2D",
             "Vec2": "float2",
             "Vec3": "float3",
             "Vec4": "float4",
@@ -61,6 +60,10 @@ def handle_compatibility(string, lang):
             "DDX": "ddx",
             "DDY": "ddy"
         }
+        if lang == "hlsl9":
+            names["Texture2D"] = "sampler2D"
+        else:
+            names["Texture2D"] = "Texture2D"
 
     for k in names:
         string = re.sub(r"\b" + k + r"\b", names[k], string)
@@ -125,7 +128,7 @@ def expand(file, xshaders, lang):
     do_expand(file)
 
     def remove_lang_specific(string, lang):
-        l = "X" + lang
+        l = "X" + lang.upper()
         pattern = r"#if " + l + "[\s\S]*#endif // " + l + "\n?"
         regex = re.compile(pattern)
         return regex.sub(lambda m: "", string)
@@ -136,15 +139,16 @@ def expand(file, xshaders, lang):
             other.remove(l)
             for o in other:
                 data = remove_lang_specific(data, o)
-            data = data.replace("#if X" + lang + "\n", "")
-            data = data.replace("\n#endif // X" + lang, "")
+            lang_upper = lang.upper()
+            data = data.replace("#if X" + lang_upper + "\n", "")
+            data = data.replace("\n#endif // X" + lang_upper, "")
             break
 
     if not lang.startswith("hlsl"):
         data = remove_lang_specific(data, "hlsl")
     else:
-        data = data.replace("#if Xhlsl\n", "")
-        data = data.replace("\n#endif // Xhlsl", "")
+        data = data.replace("#if XHLSL\n", "")
+        data = data.replace("\n#endif // XGLSL", "")
 
     print("Expanded as " + lang)
     print("-" * 80)
