@@ -20,7 +20,7 @@ Vec3            | vec3              | float3
 Vec4            | vec4              | float4
 Mat2            | mat2              | float2x2
 Mat3            | mat3              | float3x3
-Mat4            | mat4              | float3x3
+Mat4            | mat4              | float4x4
 Sample(tex, uv) | sample2D(tex, uv) | tex2D(tex, uv) / tex.Sample(gm_BaseTexture, uv)
 Frac(x)         | fract(x)          | frac(x)
 Lerp(a,b,x)     | mix(a,b,x)        | lerp(a,b,x)
