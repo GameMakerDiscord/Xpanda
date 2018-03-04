@@ -5,6 +5,7 @@ import os
 import re
 
 PATH_XSHADERS_DEFAULT = "./Xshaders/"
+LANGS = ["glsl", "hlsl9", "hlsl11"]
 LANG_DEFAULT = "glsl"
 
 P_INCLUDE_START = r"#\s*pragma\s+include\s*\(\s*\"(?P<fname>[\w.]+)\"(\s*,\s*\"(?P<lang>\w+)\")?\s*\).*"
@@ -46,7 +47,7 @@ def handle_compatibility(string, lang):
             "DDX": "dFdx",
             "DDY": "dFdy"
         }
-    elif lang == "hlsl":
+    elif lang.startswith("hlsl"):
         names = {
             "Texture2D": "Texture2D",
             "Vec2": "float2",
@@ -60,19 +61,21 @@ def handle_compatibility(string, lang):
             "DDX": "ddx",
             "DDY": "ddy"
         }
-    else:
-        raise ValueError("Invalid language {}".format(lang))
 
     for k in names:
         string = re.sub(r"\b" + k + r"\b", names[k], string)
 
+    # Sample
     regex = re.compile(r"\bSample\s*\(\s*(\w+)")
-    if lang == "hlsl":
-        string = regex.sub(lambda m: m.group().replace(
-            m.group(), m.group(1) + ".Sample(gm_BaseTexture"), string)
-    else:
+    if lang == "glsl":
         string = regex.sub(lambda m: m.group().replace(
             "Sample", "texture2D"), string)
+    elif lang == "hlsl9":
+        string = regex.sub(lambda m: m.group().replace(
+            "Sample", "tex2D"), string)
+    elif lang == "hlsl11":
+        string = regex.sub(lambda m: m.group().replace(
+            m.group(), m.group(1) + ".Sample(gm_BaseTexture"), string)
 
     return string
 
@@ -98,6 +101,8 @@ def expand(file, xshaders, lang):
                     include_fname = m.group("fname")
                     include_lang = m.group("lang")
                     if include_lang:
+                        if include_lang not in LANGS:
+                            raise ValueError("Unknown language {}!".format(include_lang))
                         if level == 0:
                             lang = include_lang
                         else:
@@ -119,16 +124,25 @@ def expand(file, xshaders, lang):
 
     do_expand(file)
 
-    if lang == "glsl":
-        pattern = r"#if Xhlsl[\s\S]*#endif // Xhlsl\n?"
+    def remove_lang_specific(string, lang):
+        l = "X" + lang
+        pattern = r"#if " + l + "[\s\S]*#endif // " + l + "\n?"
         regex = re.compile(pattern)
-        data = regex.sub(lambda m: "", data)
-        data = data.replace("#if Xglsl\n", "")
-        data = data.replace("\n#endif // Xglsl", "")
-    elif lang == "hlsl":
-        pattern = r"#if Xglsl[\s\S]*#endif // Xglsl\n?"
-        regex = re.compile(pattern)
-        data = regex.sub(lambda m: "", data)
+        return regex.sub(lambda m: "", string)
+
+    for l in LANGS:
+        if lang == l:
+            other = list(LANGS)
+            other.remove(l)
+            for o in other:
+                data = remove_lang_specific(data, o)
+            data = data.replace("#if X" + lang + "\n", "")
+            data = data.replace("\n#endif // X" + lang, "")
+            break
+
+    if not lang.startswith("hlsl"):
+        data = remove_lang_specific(data, "hlsl")
+    else:
         data = data.replace("#if Xhlsl\n", "")
         data = data.replace("\n#endif // Xhlsl", "")
 
@@ -147,14 +161,17 @@ if __name__ == "__main__":
     PARSER.add_argument(
         "--x", metavar="EXTERNAL", type=str, default=PATH_XSHADERS_DEFAULT, help="path to the folder containing the external files (default is {})".format(PATH_XSHADERS_DEFAULT))
     PARSER.add_argument(
-        "--l", metavar="LANG", type=str, default=LANG_DEFAULT, help="fallback shader language when not specified by include; can be either glsl or hlsl (default is {})".format(LANG_DEFAULT))
+        "--l", metavar="LANG", type=str, default=LANG_DEFAULT, help="fallback shader language when not specified by include; options are: {} (default is {})".format(", ".join(LANGS), LANG_DEFAULT))
 
     ARGS = PARSER.parse_args()
     PATH = os.path.realpath(ARGS.path)
     XPATH = os.path.realpath(ARGS.x)
 
-    for dirpath, dirnames, filenames in os.walk(PATH):
-        for f in filenames:
-            fpath = os.path.join(dirpath, f)
-            clear(fpath)
-            expand(fpath, XPATH, ARGS.l)
+    if ARGS.l not in LANGS:
+        print("Unknown language {}!".format(ARGS.l))
+    else:
+        for dirpath, dirnames, filenames in os.walk(PATH):
+            for f in filenames:
+                fpath = os.path.join(dirpath, f)
+                clear(fpath)
+                expand(fpath, XPATH, ARGS.l)
