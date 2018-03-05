@@ -1,7 +1,8 @@
 /// @param color The original RGB color.
-/// @param lut   Texture of color-grading lookup tables (256x265, each LUT is
-///              256x16). Needs to have interpolation enabled!
-/// @param index The index of the lut to use.
+/// @param lut   Texture of color-grading lookup tables (256x256, each LUT is
+///              256x16, placed in rows). Needs to have interpolation enabled!
+/// @param index The index of the lut to use (0 = first row, 1 = second row,
+///              ..., 15 = last row).
 Vec3 xColorGrade(Vec3 color, Texture2D lut, float index)
 {
 	Vec2 uv;
