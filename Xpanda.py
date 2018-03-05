@@ -83,7 +83,7 @@ def handle_compatibility(string, lang):
     return string
 
 
-def expand(file, xshaders, lang):
+def expand(file, path, xshaders, out, lang):
     """ Recursively expands pragma includes in the file. """
     data = ""
     includes = []
@@ -129,7 +129,7 @@ def expand(file, xshaders, lang):
                     else:
                         data += l
 
-    do_expand(file)
+    do_expand(os.path.join(path, file))
 
     def remove_lang_specific(string, lang):
         l = "X" + lang.upper()
@@ -157,7 +157,7 @@ def expand(file, xshaders, lang):
     print("Expanded as " + lang)
     print("-" * 80)
 
-    with open(file, "w") as f:
+    with open(os.path.join(out, file), "w") as f:
         f.write(data)
 
 
@@ -169,17 +169,19 @@ if __name__ == "__main__":
     PARSER.add_argument(
         "--x", metavar="EXTERNAL", type=str, default=PATH_XSHADERS_DEFAULT, help="path to the folder containing the external files (default is {})".format(PATH_XSHADERS_DEFAULT))
     PARSER.add_argument(
+        "--o", metavar="OUT", type=str, default="", help="output directory for expanded shaders; PATH is used if not specified")
+    PARSER.add_argument(
         "--l", metavar="LANG", type=str, default=LANG_DEFAULT, help="fallback shader language when not specified by include; options are: {} (default is {})".format(", ".join(LANGS), LANG_DEFAULT))
 
     ARGS = PARSER.parse_args()
     PATH = os.path.realpath(ARGS.path)
     XPATH = os.path.realpath(ARGS.x)
+    OPATH = os.path.realpath(ARGS.o) if ARGS.o else PATH
 
     if ARGS.l not in LANGS:
         print("Unknown language {}!".format(ARGS.l))
     else:
         for dirpath, dirnames, filenames in os.walk(PATH):
             for f in filenames:
-                fpath = os.path.join(dirpath, f)
-                clear(fpath)
-                expand(fpath, XPATH, ARGS.l)
+                clear(os.path.join(dirpath, f))
+                expand(f, dirpath, XPATH, OPATH, ARGS.l)

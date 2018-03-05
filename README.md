@@ -76,6 +76,7 @@ Argument       | Explanation
 `PATH`         | path to the folder containing your shaders
 `-h, --help`   | show help message and exit
 `--x EXTERNAL` | path to the folder containing the external files (default is `./Xshaders/` (relative to the Xpanda directory))
+`--o OUT`      | output directory for expanded shaders; `PATH` is used if not specified
 `--l LANG`     | fallback shader language when not specified by include, see [Languages](#languages)
 
 ### Languages:
