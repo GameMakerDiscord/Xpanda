@@ -133,9 +133,14 @@ def expand(file, path, xshaders, out, lang):
 
     def remove_lang_specific(string, lang):
         l = "X" + lang.upper()
-        pattern = r"#if " + l + "[\s\S]*#endif // " + l + "\n?"
+        pattern = r"[^\S\n]*#\s*if\s+" + l + r"[\s\S]*#\s*endif\s*//\s*" + l + "\n?"
         regex = re.compile(pattern)
         return regex.sub(lambda m: "", string)
+
+    def remove_guards(string, lang):
+        l = "X" + lang.upper()
+        string = re.sub(r"#\s*if\s+" + l + r"\s*\n", "", string)
+        return re.sub(r"\n\s*#\s*endif\s*//\s*" + l, "", string)
 
     for l in LANGS:
         if lang == l:
@@ -143,16 +148,13 @@ def expand(file, path, xshaders, out, lang):
             other.remove(l)
             for o in other:
                 data = remove_lang_specific(data, o)
-            lang_upper = lang.upper()
-            data = data.replace("#if X" + lang_upper + "\n", "")
-            data = data.replace("\n#endif // X" + lang_upper, "")
+            data = remove_guards(data, lang)
             break
 
     if not lang.startswith("hlsl"):
         data = remove_lang_specific(data, "hlsl")
     else:
-        data = data.replace("#if XHLSL\n", "")
-        data = data.replace("\n#endif // XGLSL", "")
+        data = remove_guards(data, "hlsl")
 
     print("Expanded as " + lang)
     print("-" * 80)
