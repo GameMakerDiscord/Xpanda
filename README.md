@@ -68,7 +68,7 @@ The process of expanding the includes is recursive, that means you can also incl
 Requirements: the latest [Python 3](https://www.python.org/downloads/)
 
 ```
-python Xpanda.py [-h] [--x EXTERNAL] [--l LANG] PATH
+python Xpanda.py [-h] [--x EXTERNAL] [--o OUT] [--l LANG] PATH
 ```
 
 Argument       | Explanation
@@ -76,7 +76,7 @@ Argument       | Explanation
 `PATH`         | path to the folder containing your shaders
 `-h, --help`   | show help message and exit
 `--x EXTERNAL` | path to the folder containing the external files (default is `./Xshaders/` (relative to the Xpanda directory))
-`--o OUT`      | output directory for expanded shaders; `PATH` is used if not specified
+`--o OUT`      | output directory for expanded shaders, `PATH` is used if not specified
 `--l LANG`     | fallback shader language when not specified by include, see [Languages](#languages)
 
 ### Languages:
