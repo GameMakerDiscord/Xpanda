@@ -8,7 +8,7 @@ PATH_XSHADERS_DEFAULT = "./Xshaders/"
 LANGS = ["glsl", "hlsl9", "hlsl11"]
 LANG_DEFAULT = "glsl"
 
-P_INCLUDE_START = r"#\s*pragma\s+include\s*\(\s*\"(?P<fname>[\w.]+)\"(\s*,\s*\"(?P<lang>\w+)\")?\s*\).*"
+P_INCLUDE_START = r"#\s*pragma\s+include\s*\(\s*\"(?P<fname>[\w./]+)\"(\s*,\s*\"(?P<lang>\w+)\")?\s*\).*"
 P_INCLUDE_END = r"\/\/ include\(\"(?P=fname)\"\)"
 
 
@@ -101,7 +101,8 @@ def expand(file, xshaders, lang):
             for l in lines:
                 m = re.match(r"\s*" + P_INCLUDE_START, l)
                 if m:
-                    include_fname = m.group("fname")
+                    include_fname = m.group("fname").split("/")
+                    include_fname = os.path.join(*include_fname)
                     include_lang = m.group("lang")
                     if include_lang:
                         if include_lang not in LANGS:
@@ -121,7 +122,7 @@ def expand(file, xshaders, lang):
                         data += "\n"
                         level -= 1
                         if level == 0:
-                            data += "// include(\"{}\")\n".format(include_fname)
+                            data += "// include(\"{}\")\n".format(m.group("fname"))
                 else:
                     if level != 0:
                         data += handle_compatibility(l, lang)

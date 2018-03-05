@@ -57,7 +57,7 @@ To tell Xpanda that you want to include code into your shader, simply write
 ```
 
 where:
- - `filename` is path to the included file (relative to the directory containing the includable files, see [Running Xpanda](#running-xpanda)),
+ - `filename` is path to the included file (relative to the directory containing the includable files, see [Running Xpanda](#running-xpanda)); for subfolders always use "/",
  - `language` is the language in which are your shaders written, can be omitted (see [Languages](#languages)).
 
 The process of expanding the includes is recursive, that means you can also include files from within the included files. Xpanda also deals with cyclic reference by simply never including the same file into one shader twice.
