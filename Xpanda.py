@@ -106,7 +106,8 @@ def expand(file, path, xshaders, out, lang):
                     include_lang = m.group("lang")
                     if include_lang:
                         if include_lang not in LANGS:
-                            raise ValueError("Unknown language {}!".format(include_lang))
+                            raise ValueError(
+                                "Unknown language {}!".format(include_lang))
                         if level == 0:
                             lang = include_lang
                         else:
@@ -133,7 +134,8 @@ def expand(file, path, xshaders, out, lang):
 
     def remove_lang_specific(string, lang):
         l = "X" + lang.upper()
-        pattern = r"[^\S\n]*#\s*if\s+" + l + r"[\s\S]*#\s*endif\s*//\s*" + l + "\n?"
+        pattern = r"[^\S\n]*#\s*if\s+" + l + \
+            r"[\s\S]*#\s*endif\s*//\s*" + l + "\n?"
         regex = re.compile(pattern)
         return regex.sub(lambda m: "", string)
 
@@ -158,6 +160,11 @@ def expand(file, path, xshaders, out, lang):
 
     print("Expanded as " + lang)
     print("-" * 80)
+
+    try:
+        os.mkdir(out)
+    except:
+        pass
 
     with open(os.path.join(out, file), "w") as f:
         f.write(data)
@@ -186,4 +193,5 @@ if __name__ == "__main__":
         for dirpath, dirnames, filenames in os.walk(PATH):
             for f in filenames:
                 clear(os.path.join(dirpath, f))
-                expand(f, dirpath, XPATH, OPATH, ARGS.l)
+                expand(f, dirpath, XPATH, os.path.join(
+                    OPATH, dirpath[len(PATH) + 1:]), ARGS.l)
