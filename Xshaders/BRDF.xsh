@@ -1,5 +1,6 @@
 #pragma include("Math.xsh")
 
+/// @desc Default specular color for dielectrics.
 #define X_F0_DEFAULT Vec3(0.22, 0.22, 0.22)
 
 /// @desc Normal distribution function
@@ -30,6 +31,10 @@ Vec3 xSpecularF_Schlick(Vec3 f0, float NdotV)
 }
 
 /// @desc Cook-Torrance microfacet specular shading
+/// @note N = normalize(vertexNormal)
+///       L = normalize(light - vertex)
+///       V = normalize(camera - vertex)
+///       H = normalize(L + V)
 /// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
 Vec3 xBRDF(Vec3 f0, float roughness, float NdotL, float NdotV, float NdotH)
 {
