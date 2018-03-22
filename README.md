@@ -53,7 +53,7 @@ when included, Xpanda automatically removes code guarded by other language types
 To tell Xpanda that you want to include code into your shader, simply write
 
 ```c
-#pragma include("filename", "language")
+#pragma include("filename"[, "language"])
 ```
 
 where:
