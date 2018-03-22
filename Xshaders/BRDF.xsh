@@ -1,4 +1,4 @@
-#pragma include("Math.fsh")
+#pragma include("Math.xsh")
 
 #define X_F0_DEFAULT Vec3(0.22, 0.22, 0.22)
 
