@@ -1,3 +1,6 @@
+#define X_PI   3.14159265359
+#define X_2_PI 6.28318530718
+
 /// @return x^2
 float xPow2(float x) { return (x*x); }
 
