@@ -1,5 +1,6 @@
 /// @param n View-space normal vector.
 /// @return The normal vector encoded into two components.
+/// @source http://aras-p.info/texts/CompactNormalStorage.html
 Vec2 xEncodeNormal(Vec3 n)
 {
 	n.y = -n.y;
@@ -9,6 +10,7 @@ Vec2 xEncodeNormal(Vec3 n)
 
 /// @param enc View-space normal encoded into two components.
 /// @return Decoded normal.
+/// @source http://aras-p.info/texts/CompactNormalStorage.html
 Vec3 xDecodeNormal(Vec2 enc)
 {
 	Vec2 fenc = enc * 4.0 - 2.0;
