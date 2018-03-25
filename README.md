@@ -22,10 +22,11 @@ Mat2            | mat2              | float2x2
 Mat3            | mat3              | float3x3
 Mat4            | mat4              | float4x4
 Sample(tex, uv) | sample2D(tex, uv) | tex2D(tex, uv) / tex.Sample(gm_BaseTexture, uv)
-Frac(x)         | fract(x)          | frac(x)
-Lerp(a,b,x)     | mix(a,b,x)        | lerp(a,b,x)
 DDX(x)          | dFdx(x)           | ddx(x)
 DDY(y)          | dFdy(y)           | ddy(y)
+Frac(x)         | fract(x)          | frac(x)
+Lerp(a,b,x)     | mix(a,b,x)        | lerp(a,b,x)
+Rsqrt(x)        | inversesqrt(x)    | rsqrt(x)
 
 If the translation table does not provide a type name or a function that you need, you can use following guards:
 

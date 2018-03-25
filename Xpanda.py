@@ -42,10 +42,11 @@ def handle_compatibility(string, lang):
             "Mat2": "mat2",
             "Mat3": "mat3",
             "Mat4": "mat4",
+            "DDX": "dFdx",
+            "DDY": "dFdy",
             "Frac": "fract",
             "Lerp": "mix",
-            "DDX": "dFdx",
-            "DDY": "dFdy"
+            "Rsqrt": "inversesqrt"
         }
     elif lang.startswith("hlsl"):
         names = {
@@ -55,10 +56,11 @@ def handle_compatibility(string, lang):
             "Mat2": "float2x2",
             "Mat3": "float3x3",
             "Mat4": "float4x4",
+            "DDX": "ddx",
+            "DDY": "ddy",
             "Frac": "frac",
             "Lerp": "lerp",
-            "DDX": "ddx",
-            "DDY": "ddy"
+            "Rsqrt": "rsqrt"
         }
         if lang == "hlsl9":
             names["Texture2D"] = "sampler2D"
