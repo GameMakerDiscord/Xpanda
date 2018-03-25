@@ -1,5 +1,6 @@
 /// @param d Linearized depth to encode.
 /// @return Encoded depth.
+/// @source http://aras-p.info/blog/2009/07/30/encoding-floats-to-rgba-the-final/
 Vec3 xEncodeDepth(float d)
 {
 	const float inv255 = 1.0 / 255.0;
@@ -17,6 +18,7 @@ Vec3 xEncodeDepth(float d)
 
 /// @param c Encoded depth.
 /// @return Docoded linear depth.
+/// @source http://aras-p.info/blog/2009/07/30/encoding-floats-to-rgba-the-final/
 float xDecodeDepth(Vec3 c)
 {
 	const float inv255 = 1.0 / 255.0;
