@@ -1,5 +1,6 @@
 #pragma include("Math.xsh")
 
+/// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
 Vec3 xImportanceSample(float phi, float cosTheta, float sinTheta, Vec3 N)
 {
 	Vec3 H = Vec3(sinTheta * cos(phi), sinTheta * sin(phi), cosTheta);
@@ -10,7 +11,7 @@ Vec3 xImportanceSample(float phi, float cosTheta, float sinTheta, Vec3 N)
 }
 
 /// @source http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
-Vec3 xImportanceSampleLambert(Vec2 Xi, Vec3 N)
+Vec3 xImportanceSample_Lambert(Vec2 Xi, Vec3 N)
 {
 	float phi = 2.0 * X_PI * Xi.y;
 	float cosTheta = sqrt(1.0 - Xi.x);
@@ -19,7 +20,7 @@ Vec3 xImportanceSampleLambert(Vec2 Xi, Vec3 N)
 }
 
 /// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
-Vec3 xImportanceSampleGGX(Vec2 Xi, float roughness, vec3 N)
+Vec3 xImportanceSample_GGX(Vec2 Xi, vec3 N, float roughness)
 {
 	float a = roghness*roughness;
 	float phi = 2.0 * X_PI * Xi.x;

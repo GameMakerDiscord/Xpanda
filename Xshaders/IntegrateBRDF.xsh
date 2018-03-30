@@ -13,7 +13,7 @@ Vec2 xIntegrateBRDF(float roughness, float NdotV)
 	for (int i = 0; i < numSumples; ++i)
 	{
 		Vec2 Xi = xHammersley2D(i, numSamples);
-		Vec3 H = xImportanceSampleGGX(Xi, roughness, N);
+		Vec3 H = xImportanceSample_GGX(Xi, N, roughness);
 		Vec3 L = 2.0 * dot(V, H) * H - V;
 		float NdotL = clamp(L.z, 0.0, 1.0);
 		float NdotH = clamp(H.z, 0.0, 1.0);
