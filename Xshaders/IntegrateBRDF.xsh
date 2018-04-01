@@ -9,11 +9,11 @@ Vec2 xIntegrateBRDF(float roughness, float NdotV)
 	Vec3 V = Vec3(sqrt(1.0 - NdotV*NdotV), 0.0, NdotV);
 	float a = 0.0;
 	float b = 0.0;
-	const int numSumples = 1024;
-	for (int i = 0; i < numSumples; ++i)
+	const int numSamples = 1024;
+	for (int i = 0; i < numSamples; ++i)
 	{
 		Vec2 Xi = xHammersley2D(i, numSamples);
-		Vec3 H = xImportanceSample_GGX(Xi, N, roughness);
+		Vec3 H = xImportanceSample_GGX(Xi, Vec3(0.0, 0.0, 1.0), roughness);
 		Vec3 L = 2.0 * dot(V, H) * H - V;
 		float NdotL = clamp(L.z, 0.0, 1.0);
 		float NdotH = clamp(H.z, 0.0, 1.0);

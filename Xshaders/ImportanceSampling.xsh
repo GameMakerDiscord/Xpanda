@@ -22,7 +22,7 @@ Vec3 xImportanceSample_Lambert(Vec2 Xi, Vec3 N)
 /// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
 Vec3 xImportanceSample_GGX(Vec2 Xi, Vec3 N, float roughness)
 {
-	float a = roghness*roughness;
+	float a = roughness*roughness;
 	float phi = 2.0 * X_PI * Xi.x;
 	float cosTheta = sqrt((1.0 - Xi.y) / (1.0 + (a*a - 1.0) * Xi.y));
 	float sinTheta = sqrt(1.0 - cosTheta*cosTheta);
