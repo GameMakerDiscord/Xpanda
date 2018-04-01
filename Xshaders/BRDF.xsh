@@ -1,7 +1,8 @@
 #pragma include("Math.xsh")
 
-/// @desc Default specular color for dielectrics.
-#define X_F0_DEFAULT Vec3(0.22, 0.22, 0.22)
+/// @desc Default specular color for dielectrics (4% based on
+///       https://www.marmoset.co/posts/pbr-texture-conversion/).
+#define X_F0_DEFAULT Vec3(0.04, 0.04, 0.04)
 
 /// @desc Normal distribution function
 /// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
