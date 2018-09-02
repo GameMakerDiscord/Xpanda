@@ -1,5 +1,6 @@
 #pragma include("CubeMapping.xsh")
 #pragma include("Hammersley2D.xsh")
+#pragma include("ImportanceSampling.xsh")
 
 /// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
 Vec3 xPrefilterIBL_GGX(Texture2D cubemap, Vec3 R)
