@@ -11,7 +11,7 @@ Vec3 xPrefilterIBL_Lambert(Texture2D cubemap, Vec3 R)
 	const int numSamples = 1024;
 	for (int i = 0; i < numSamples; ++i)
 	{
-		Vec3 Xi = xHammersley2D(i, numSamples);
+		Vec2 Xi = xHammersley2D(i, numSamples);
 		Vec3 H = xImportanceSample_Lambert(Xi, N);
 		Vec3 L = 2.0 * dot(V, H) * H - V;
 		float NdotL = clamp(dot(N, L), 0.0, 1.0);
