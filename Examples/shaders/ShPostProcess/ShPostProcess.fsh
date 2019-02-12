@@ -25,6 +25,7 @@ vec3 xColorGrade(vec3 color, sampler2D lut, float index)
 		texture2D(lut, uv2 + vec2(z1, 0.0)).rgb,
 		fract(b15));
 }
+
 // include("ColorGrading.xsh")
 #pragma include("ChromaticAberration.xsh", "glsl")
 /// @param direction  Direction of distortion.
@@ -41,6 +42,7 @@ vec3 xChromaticAberration(
 		texture2D(tex, uv + direction * distortion.g).g,
 		texture2D(tex, uv + direction * distortion.b).b);
 }
+
 // include("ChromaticAberration.xsh")
 
 void main()

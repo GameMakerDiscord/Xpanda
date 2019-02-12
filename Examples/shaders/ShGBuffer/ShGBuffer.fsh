@@ -24,6 +24,7 @@ Texture2D texEmissive : register(t3);
 #pragma include("DepthEncoding.xsh")
 /// @param d Linearized depth to encode.
 /// @return Encoded depth.
+/// @source http://aras-p.info/blog/2009/07/30/encoding-floats-to-rgba-the-final/
 float3 xEncodeDepth(float d)
 {
 	const float inv255 = 1.0 / 255.0;
@@ -41,11 +42,13 @@ float3 xEncodeDepth(float d)
 
 /// @param c Encoded depth.
 /// @return Docoded linear depth.
+/// @source http://aras-p.info/blog/2009/07/30/encoding-floats-to-rgba-the-final/
 float xDecodeDepth(float3 c)
 {
 	const float inv255 = 1.0 / 255.0;
 	return c.x + c.y*inv255 + c.z*inv255*inv255;
 }
+
 // include("DepthEncoding.xsh")
 #pragma include("Projecting.xsh")
 /// @param tanAspect (tanFovY*(screenWidth/screenHeight),-tanFovY), where
@@ -68,6 +71,7 @@ float2 xUnproject(float4 p)
 	uv.y = 1.0 - uv.y;
 	return uv;
 }
+
 // include("Projecting.xsh")
 
 void main(in VS_out IN, out PS_out OUT)

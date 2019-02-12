@@ -29,6 +29,7 @@ uniform float3   u_vCamPos;         // Camera's (x,y,z) position in world space.
 #pragma include("DepthEncoding.xsh")
 /// @param d Linearized depth to encode.
 /// @return Encoded depth.
+/// @source http://aras-p.info/blog/2009/07/30/encoding-floats-to-rgba-the-final/
 float3 xEncodeDepth(float d)
 {
 	const float inv255 = 1.0 / 255.0;
@@ -46,11 +47,13 @@ float3 xEncodeDepth(float d)
 
 /// @param c Encoded depth.
 /// @return Docoded linear depth.
+/// @source http://aras-p.info/blog/2009/07/30/encoding-floats-to-rgba-the-final/
 float xDecodeDepth(float3 c)
 {
 	const float inv255 = 1.0 / 255.0;
 	return c.x + c.y*inv255 + c.z*inv255*inv255;
 }
+
 // include("DepthEncoding.xsh")
 #pragma include("Projecting.xsh")
 /// @param tanAspect (tanFovY*(screenWidth/screenHeight),-tanFovY), where
@@ -73,6 +76,7 @@ float2 xUnproject(float4 p)
 	uv.y = 1.0 - uv.y;
 	return uv;
 }
+
 // include("Projecting.xsh")
 #pragma include("ShadowMapping.xsh")
 
@@ -100,6 +104,7 @@ float xShadowMapCompare(Texture2D shadowMap, float2 texel, float2 uv, float comp
 		lerp(rb, rt, f.y),
 		f.x);
 }
+
 // include("ShadowMapping.xsh")
 #pragma include("BRDF.xsh")
 #define X_PI   3.14159265359
@@ -117,8 +122,10 @@ float xPow4(float x) { return (x*x*x*x); }
 /// @return x^5
 float xPow5(float x) { return (x*x*x*x*x); }
 
-/// @desc Default specular color for dielectrics.
-#define X_F0_DEFAULT float3(0.22, 0.22, 0.22)
+
+/// @desc Default specular color for dielectrics (4% based on
+///       http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf).
+#define X_F0_DEFAULT float3(0.04, 0.04, 0.04)
 
 /// @desc Normal distribution function
 /// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
@@ -160,6 +167,7 @@ float3 xBRDF(float3 f0, float roughness, float NdotL, float NdotV, float NdotH)
 		* xSpecularG_Schlick(roughness, NdotL, NdotH);
 	return specular / (4.0*NdotL*NdotV);
 }
+
 // include("BRDF.xsh")
 
 void main(in VS_out IN, out PS_out OUT)

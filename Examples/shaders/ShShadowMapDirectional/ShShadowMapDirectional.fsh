@@ -4,6 +4,7 @@ varying float v_fDepth;
 #pragma include("DepthEncoding.xsh", "glsl")
 /// @param d Linearized depth to encode.
 /// @return Encoded depth.
+/// @source http://aras-p.info/blog/2009/07/30/encoding-floats-to-rgba-the-final/
 vec3 xEncodeDepth(float d)
 {
 	const float inv255 = 1.0 / 255.0;
@@ -21,11 +22,13 @@ vec3 xEncodeDepth(float d)
 
 /// @param c Encoded depth.
 /// @return Docoded linear depth.
+/// @source http://aras-p.info/blog/2009/07/30/encoding-floats-to-rgba-the-final/
 float xDecodeDepth(vec3 c)
 {
 	const float inv255 = 1.0 / 255.0;
 	return c.x + c.y*inv255 + c.z*inv255*inv255;
 }
+
 // include("DepthEncoding.xsh")
 
 void main()
