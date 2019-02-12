@@ -1,0 +1,1 @@
+ssao_free();
