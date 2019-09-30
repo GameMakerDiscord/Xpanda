@@ -18,4 +18,4 @@
 //	_y += _size * 3;
 //}
 
-draw_text(0, 0, string(fps) + " (" + string(fps_real) + ")");
+//draw_text(0, 0, string(fps) + " (" + string(fps_real) + ")");

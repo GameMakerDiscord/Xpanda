@@ -1,7 +1,10 @@
 # Xpanda
-Xpanda is a tool that allows you to include code from external files into your shaders, while also trying to handle shader compatibility.
+> Xpanda is a tool that allows you to include code from external files into your shaders, while also trying to handle shader compatibility.
+
+![License](https://img.shields.io/github/license/GameMakerDiscord/Xpanda)
 
 Maintained by: [kraifpatrik](https://github.com/kraifpatrik)
+
 Donate: [PayPal.Me](https://www.paypal.me/kraifpatrik/1usd)
 
 # Table of Contents
@@ -9,7 +12,7 @@ Donate: [PayPal.Me](https://www.paypal.me/kraifpatrik/1usd)
  - [Specifying includes](#specifying-includes)
  - [Running Xpanda](#running-xpanda)
 
-## Writing compatible shader code
+# Writing compatible shader code
 To handle compatiblity with GLSL and HLSL, follow this translation table:
 
 Xpanda          | GLSL equivalent    | HLSL9 / HLSL11 equivalent
@@ -50,7 +53,7 @@ If the translation table does not provide a type name or a function that you nee
 
 when included, Xpanda automatically removes code guarded by other language types than yours target language (as well as the guards for the target language).
 
-## Specifying includes
+# Specifying includes
 To tell Xpanda that you want to include code into your shader, simply write
 
 ```c
@@ -65,7 +68,7 @@ The process of expanding the includes is recursive, that means you can also incl
 
 **Note:** Including HLSL code from shader earlier specified as GLSL (or vice versa) will cause error!
 
-## Running Xpanda
+# Running Xpanda
 Requirements: the latest [Python 3](https://www.python.org/downloads/)
 
 ```
@@ -80,12 +83,12 @@ Argument       | Explanation
 `--o OUT`      | output directory for expanded shaders, `PATH` is used if not specified
 `--l LANG`     | fallback shader language when not specified by include, see [Languages](#languages)
 
-### Languages:
+## Languages:
  - `glsl` (default)
  - `hlsl9`
  - `hlsl11`
 
-### Example:
+## Example:
 This will expand all includes in all files within the shaders directory of my project, taking the included files from the Xshaders directory. Since I know most of my shaders in the project are written in HLSL11, I can set it as the default language and rarely specify GLSL.
 
 ```
