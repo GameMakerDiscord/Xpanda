@@ -1,6 +1,7 @@
 /.vscode/
 /env/
 /tests/
+__pycache__/
 Thumbs.db 
 *.pyc
 !.gitkeep
