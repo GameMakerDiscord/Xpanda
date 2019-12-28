@@ -52,8 +52,8 @@ class Preprocessor(object):
                 t.value = t.value.replace(k, v)
             t.value = t.value.replace("__NEQ__", " != ")
 
-            if t.value != val_orig:
-                print("Python:", t.value)
+            # if t.value != val_orig:
+            #     print("Python:", t.value)
 
         return t.value != val_orig
 
@@ -70,18 +70,19 @@ class Preprocessor(object):
         if not token or token.type_ != Token.Type.IF:
             return None
         self._next()
-        replaced = self._replace_vars(token, python=True)
-        evaluated = False
 
         processed = []
-        line = " ".join(token.value.lstrip()[1:].split()[1:])
+        value_backup = token.value
 
         try:
+            self._replace_vars(token, python=True)
+            line = " ".join(token.value.lstrip()[1:].split()[1:])
             res = eval(line)
             evaluated = True
         except:
-            if replaced:
-                raise
+            token.value = value_backup
+            self._replace_vars(token)
+            evaluated = False
 
         if evaluated:
             if res:
@@ -123,7 +124,9 @@ class Preprocessor(object):
                     break
 
                 else:
-                    self._consume(Token.Type.ENDIF, Token.Type.ELSE, Token.Type.ELIF)
+                    self._consume(Token.Type.ENDIF,
+                                  Token.Type.ELSE,
+                                  Token.Type.ELIF)
                     break
 
         else:
@@ -155,8 +158,9 @@ class Preprocessor(object):
 
                 else:
                     processed.append(
-                        self._consume(Token.Type.ENDIF, Token.Type.ELSE, Token.Type.ELIF)
-                    )
+                        self._consume(Token.Type.ENDIF,
+                                      Token.Type.ELSE,
+                                      Token.Type.ELIF))
                     break
 
         return processed

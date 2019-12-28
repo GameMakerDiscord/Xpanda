@@ -191,7 +191,7 @@ if __name__ == "__main__":
         # Ignore Ctrl+C
         print()
     except Exception as e:
-        print(str(e))
+        print("ERROR:", str(e))
 
     exit()
 
