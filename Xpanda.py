@@ -27,8 +27,8 @@ def print_help():
         "  OUT            - Output directory for expanded shaders, PATH is used if not specified.\n"
         "  LANG           - Fallback shader language when not specified by include.\n"
         "                   Options are: {langs} (default is {lang_def}).\n"
-        "  CONSTANT=value - Custom constant definition. Values can be either numbers, strings or\n"
-        "                   booleans (t/true or f/false). Maximum number of constants is not limited.\n"
+        "  CONSTANT=value - Custom constant definition. Values can be either numbers, booleans or\n"
+        "                   any string. Maximum number of constants is not limited.\n"
     ).format(
         external=PATH_XSHADERS_DEFAULT,
         langs=", ".join(LANGS),
@@ -67,9 +67,9 @@ if __name__ == "__main__":
                 try:
                     v = int(v)
                 except:
-                    if v.lower() in ["t", "true"]:
+                    if v == "true":
                         v = True
-                    elif v.lower() in ["f", "false"]:
+                    elif v == "false":
                         v = False
                 ENV[k] = v
             elif not PATH:
