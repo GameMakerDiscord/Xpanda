@@ -8,12 +8,27 @@ Maintained by: [kraifpatrik](https://github.com/kraifpatrik)
 Donate: [PayPal.Me](https://www.paypal.me/kraifpatrik/1usd)
 
 # Table of Contents
- - [Writing compatible shader code](#writing-compatible-shader-code)
- - [Specifying includes](#specifying-includes)
- - [Running Xpanda](#running-xpanda)
+* [Installation](#installation)
+* [Writing compatible shader code](#writing-compatible-shader-code)
+* [Constants](#constants)
+* [Directives](#directives)
+  - [Include](#include)
+  - [Branching](#branching)
+* [Running Xpanda](#running-xpanda)
+
+# Installation
+* Requires [Python 3](https://www.python.org/)
+
+```cmd
+git clone https://github.com/GameMakerDiscord/Xpanda
+cd Xpanda
+pip3 install -r requirements.txt
+```
+
+*It is recommended to add C:\path\to\Xpanda\bin into your PATH to be able to run Xpanda from anywhere.*
 
 # Writing compatible shader code
-To handle compatiblity with GLSL and HLSL, follow this translation table:
+When writing includable shader code, you can use following Xpanda types and functions, which are automatically translated to their GLSL / HLSL equivalent.
 
 Xpanda          | GLSL equivalent    | HLSL9 / HLSL11 equivalent
 --------------- | ------------------ | -------------------------
@@ -31,66 +46,111 @@ Frac(x)         | fract(x)           | frac(x)
 Lerp(a,b,x)     | mix(a,b,x)         | lerp(a,b,x)
 Rsqrt(x)        | inversesqrt(x)     | rsqrt(x)
 
-If the translation table does not provide a type name or a function that you need, you can use following guards:
+# Constants
+By default Xpanda defines following constants:
 
-```c
-#if XGLSL
-// Some GLSL-only code here...
-#endif // XGLSL
+Constant  | Value
+--------- | -----
+`XGLSL`   | `true` if the target language is GLSL, otherwise `false`
+`XHLSL`   | `true` if the target language is HLSL9 or HLSL9, otherwise `false`
+`XHLSL9`  | `true` if the target language is HLSL9, otherwise `false`
+`XHLSL11` | `true` if the target language is HLSL11, otherwise `false`
 
-#if XHLSL
-// Some code compatible with both HLSL9 and HLSL11...
-#endif // XHLSL
+It is also possible to define custom constants through command line parameters.
 
-#if XHLSL9
-// Some code compatible only with HLSL9...
-#endif // XHLSL9
+**All occurrences of constants are automatically replaced by their values!**
 
-#if XHLSL11
-// Some code compatible only with HLSL11...
-#endif // XHLSL11
-```
+Constants are especially handy in [branching](#branching), where they can be used to easily create shader permutations.
 
-when included, Xpanda automatically removes code guarded by other language types than yours target language (as well as the guards for the target language).
+# Directives
 
-# Specifying includes
+## Include
 To tell Xpanda that you want to include code into your shader, simply write
 
-```c
+```cpp
 #pragma include("filename"[, "language"])
 ```
 
 where:
- - `filename` is path to the included file (relative to the directory containing the includable files, see [Running Xpanda](#running-xpanda)); for subfolders always use "/",
- - `language` is the language in which are your shaders written, can be omitted (see [Languages](#languages)).
+- `filename` is path to the included file (relative to the directory containing the includable files); for subfolders always use "/",
+- `language` is the language in which are your shaders written (glsl, hlsl9 or hlsl11).
 
 The process of expanding the includes is recursive, that means you can also include files from within the included files. Xpanda also deals with cyclic reference by simply never including the same file into one shader twice. It is also not necessary to delete the included code by hand before running Xpanda again, it's done automatically!
 
 **Note:** Including HLSL code from shader earlier specified as GLSL (or vice versa) will cause error!
 
+## Branching
+Xpanda's preprocessor is also capable of branching:
+
+```cpp
+// Simple if
+#if expression
+  // ..
+#endif
+
+// If with else branch
+#if expression
+  // ...
+#else
+  // ...
+#endif
+
+// Branches like these can be simplified using elif
+#if expression1
+  // ...
+#else
+  #if expression2
+    // ...
+  #endif
+#endif
+
+#if expression1
+  // ...
+#elif expression2
+  // ...
+#endif
+
+// You can chain as many elifs as you want
+#if expression1
+  // ...
+#elif expression2
+  // ...
+#elif expression3
+  // ...
+#else
+  // ...
+#endif
+```
+
+In the current implementation, expressions are evaluated using Python's `eval`. If an expression evaluates to `true` (or anything that would pass in `if`), then the code is included in the shader. If Python fails to eval the expression, then both the directive and the code it surrounds are left in the shader!
+
+C-like operators/keywords `&&`, `||`, `!`, `true`, `false` in expressions are automatically translated to their Python counterparts before eval. **You shouldn't directly use Python's `and`, `or`, `not`, `True`, `False` in expressions, since their evaluation process may be a subject to change in the future!**
+
+## Examples:
+```cpp
+#if XGLSL
+  // Code to include only in GLSL shaders
+#else
+  // Code to include only in HLSL shaders
+#endif
+
+#if XHLSL
+  // Code common for both HLSL9 and HLSL11
+  #if XHLSL9
+    // HLSL9 specific code
+  #else
+    // HLSL11 specific code
+  #endif
+#endif
+
+#if (X * 2 > 4) && !((A || B) && C)
+  // Complex conditions like these are also supported
+#endif
+```
+
 # Running Xpanda
-Requirements: the latest [Python 3](https://www.python.org/downloads/)
+Xpanda has a just a few command line parameters. To help you get started, you can first run following command, which will display a help message. In this message you can find all parameters and their descriptions.
 
-```
-python Xpanda.py [-h] [--x EXTERNAL] [--o OUT] [--l LANG] PATH
-```
-
-Argument       | Explanation
--------------- | -----------
-`PATH`         | path to the folder containing your shaders
-`-h, --help`   | show help message and exit
-`--x EXTERNAL` | path to the folder containing the external files (default is `./Xshaders/` (relative to the Xpanda directory))
-`--o OUT`      | output directory for expanded shaders, `PATH` is used if not specified
-`--l LANG`     | fallback shader language when not specified by include, see [Languages](#languages)
-
-## Languages:
- - `glsl` (default)
- - `hlsl9`
- - `hlsl11`
-
-## Example:
-This will expand all includes in all files within the shaders directory of my project, taking the included files from the Xshaders directory. Since I know most of my shaders in the project are written in HLSL11, I can set it as the default language and rarely specify GLSL.
-
-```
-python Xpanda.py --x C:\Users\Patrik\Xshaders --l hlsl11 C:\Users\Patrik\GameMakerStudio2\Projects\MyProject\shaders
+```cmd
+Xpanda -h
 ```
