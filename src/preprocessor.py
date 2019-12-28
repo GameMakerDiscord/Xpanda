@@ -62,23 +62,48 @@ class Preprocessor(object):
                 raise
 
         if evaluated:
-            if res:
-                processed += self._process()
-            else:
-                self._process()
-
-            _next = self._peek()
-            if _next and _next.type_ == Token.Type.ENDIF:
-                self._next()
-            elif _next and _next.type_ == Token.Type.ELSE:
-                self._next()
-                if not res:
+            # FIXME: WTF is this shit
+            while True:
+                if res:
                     processed += self._process()
                 else:
                     self._process()
-                self._consume(Token.Type.ENDIF)
-            else:
-                self._consume(Token.Type.ENDIF, Token.Type.ELSE)
+
+                _next = self._peek()
+
+                if _next and _next.type_ == Token.Type.ENDIF:
+                    self._next()
+                    break
+
+                elif _next and _next.type_ == Token.Type.ELIF:
+                    self._next()
+
+                    if not res:
+                        self._replace_vars(_next)
+                        line = " ".join(_next.value.lstrip()[1:].split()[1:])
+
+                        res = eval(line)
+
+                        if res:
+                            processed += self._process()
+                        else:
+                            self._process()
+                    else:
+                        self._process()
+
+                elif _next and _next.type_ == Token.Type.ELSE:
+                    self._next()
+                    if not res:
+                        processed += self._process()
+                    else:
+                        self._process()
+                    self._consume(Token.Type.ENDIF)
+                    break
+
+                else:
+                    self._consume(Token.Type.ENDIF, Token.Type.ELSE, Token.Type.ELIF)
+                    break
+
         else:
             processed.append(token)
             processed += self._process()
