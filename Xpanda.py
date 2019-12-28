@@ -1,8 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import argparse
 import os
 import re
+
+from src.preprocessor import Preprocessor
+from src.tokenizer import tokenize
 
 PATH_XSHADERS_DEFAULT = "./Xshaders/"
 LANGS = ["glsl", "hlsl9", "hlsl11"]
@@ -173,6 +176,15 @@ def expand(file, path, xshaders, out, lang):
 
 
 if __name__ == "__main__":
+    tokens = tokenize("tests/test.glsl")
+    processed = Preprocessor(tokens, {
+        "A": True,
+        "B": True,
+    }).process()
+    print(processed)
+
+    exit()
+
     PARSER = argparse.ArgumentParser(
         description="Include code from external files into your shaders.")
     PARSER.add_argument(

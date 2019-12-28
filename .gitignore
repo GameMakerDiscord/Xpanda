@@ -1,4 +1,6 @@
+/.vscode/
+/env/
+/tests/
 Thumbs.db 
-.vscode
-.pyc
-/tests
+*.pyc
+!.gitkeep
