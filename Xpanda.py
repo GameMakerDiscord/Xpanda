@@ -176,12 +176,19 @@ def expand(file, path, xshaders, out, lang):
 
 
 if __name__ == "__main__":
-    tokens = tokenize("tests/test.glsl")
-    processed = Preprocessor(tokens, {
-        "A": True,
-        "B": True,
-    }).process()
-    print(processed)
+    try:
+        tokens = tokenize("tests/test.glsl")
+        processed = Preprocessor(tokens, {
+            "A": True,
+            "B": False,
+            "C": True,
+        }).process()
+        print(processed)
+    except KeyboardInterrupt:
+        # Ignore Ctrl+C
+        print()
+    except Exception as e:
+        print(str(e))
 
     exit()
 

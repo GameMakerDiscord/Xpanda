@@ -19,10 +19,11 @@ class Preprocessor(object):
             return token
         return None
 
-    def _consume(self, type_) -> Token:
+    def _consume(self, *args) -> Token:
         token = self._peek()
-        if not token or token.type_ != type_:
-            raise Exception("Syntax error: {} expected, found {}!".format(type_, token.type_))
+        if not token or token.type_ not in args:
+            raise Exception("Syntax error: {} expected, found {}!".format(
+                str(args), token.type_))
         self._next()
         return token
 
@@ -65,7 +66,19 @@ class Preprocessor(object):
                 processed += self._process()
             else:
                 self._process()
-            self._consume(Token.Type.ENDIF)
+
+            _next = self._peek()
+            if _next and _next.type_ == Token.Type.ENDIF:
+                self._next()
+            elif _next and _next.type_ == Token.Type.ELSE:
+                self._next()
+                if not res:
+                    processed += self._process()
+                else:
+                    self._process()
+                self._consume(Token.Type.ENDIF)
+            else:
+                self._consume(Token.Type.ENDIF, Token.Type.ELSE)
         else:
             processed.append(token)
             processed += self._process()
