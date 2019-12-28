@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import argparse
 import os
-import re
+import sys
 
 from src.common import *
 from src.legacy import *
@@ -14,33 +13,96 @@ PATH_XSHADERS_DEFAULT = "./Xshaders/"
 LANG_DEFAULT = "glsl"
 
 
+def print_help():
+    print((
+        "Usage: Xpanda [-h] PATH [--x EXTERNAL] [--o OUT] [--l LANG] [CONSTANT=value ...]\n"
+        "\n"
+        "Includes code from external files into your shaders.\n"
+        "\n"
+        "Arguments:\n"
+        "\n"
+        "  -h             - Shows this help message.\n"
+        "  PATH           - Path to the folder containing your shaders.\n"
+        "  EXTERNAL       - Path to the folder containing the external files (default is {external}).\n"
+        "  OUT            - Output directory for expanded shaders, PATH is used if not specified.\n"
+        "  LANG           - Fallback shader language when not specified by include.\n"
+        "                   Options are: {langs} (default is {lang_def}).\n"
+        "  CONSTANT=value - Custom constant definition. Values can be either numbers, strings or\n"
+        "                   booleans (t/true or f/false). Maximum number of constants is not limited.\n"
+    ).format(
+        external=PATH_XSHADERS_DEFAULT,
+        langs=", ".join(LANGS),
+        lang_def=LANG_DEFAULT,
+    ))
+
+
 if __name__ == "__main__":
-    PARSER = argparse.ArgumentParser(
-        description="Include code from external files into your shaders.")
-    PARSER.add_argument(
-        "path", metavar="PATH", type=str, help="path to the folder containing your shaders")
-    PARSER.add_argument(
-        "--x", metavar="EXTERNAL", type=str, default=PATH_XSHADERS_DEFAULT, help="path to the folder containing the external files (default is {})".format(PATH_XSHADERS_DEFAULT))
-    PARSER.add_argument(
-        "--o", metavar="OUT", type=str, default="", help="output directory for expanded shaders; PATH is used if not specified")
-    PARSER.add_argument(
-        "--l", metavar="LANG", type=str, default=LANG_DEFAULT, help="fallback shader language when not specified by include; options are: {} (default is {})".format(", ".join(LANGS), LANG_DEFAULT))
+    argc = len(sys.argv)
 
-    ARGS = PARSER.parse_args()
-    PATH = os.path.realpath(ARGS.path)
-    XPATH = os.path.realpath(ARGS.x)
-    OPATH = os.path.realpath(ARGS.o) if ARGS.o else PATH
+    PATH = None
+    XPATH = os.path.realpath(PATH_XSHADERS_DEFAULT)
+    OPATH = ""
+    LANG_CURRENT = "glsl"
+    ENV = {}
 
-    if ARGS.l not in LANGS:
-        print("Unknown language {}!".format(ARGS.l))
+    index = 1
+    try:
+        while index < argc:
+            arg = sys.argv[index]
+
+            if arg == "-h":
+                print_help()
+                exit()
+            elif arg == "--x":
+                index += 1
+                XPATH = os.path.realpath(sys.argv[index])
+            elif arg == "--o":
+                index += 1
+                OPATH = os.path.realpath(sys.argv[index])
+            elif arg == "--l":
+                index += 1
+                LANG_CURRENT = sys.argv[index]
+            elif arg.count("=") == 1:
+                k, v = arg.split("=", 1)
+                try:
+                    v = int(v)
+                except:
+                    if v.lower() in ["t", "true"]:
+                        v = True
+                    elif v.lower() in ["f", "false"]:
+                        v = False
+                ENV[k] = v
+            elif not PATH:
+                p = os.path.realpath(arg)
+                if os.path.isdir(p):
+                    PATH = p
+            else:
+                raise Exception(
+                    "Unknown argument {}! Use -h to show help message.".format(arg))
+
+            index += 1
+    except IndexError:
+        print("ERROR: No value defined for argument {}!".format(
+            sys.argv[index - 1]))
+        exit()
+    except Exception as e:
+        print("ERROR:", e)
         exit()
 
-    env = {
-        "XGLSL": ARGS.l == "glsl",
-        "XHLSL": ARGS.l in ["hlsl9", "hlsl11"],
-        "XHLSL9": ARGS.l == "hlsl9",
-        "XHLSL11": ARGS.l == "hlsl11"
-    }
+    if PATH is None:
+        print("Argument PATH not defined! Use -h to show help message.")
+        exit()
+
+    OPATH = os.path.realpath(OPATH) if OPATH else PATH
+
+    if LANG_CURRENT not in LANGS:
+        print("Unknown language {}!".format(LANG_CURRENT))
+        exit()
+
+    ENV["XGLSL"] = LANG_CURRENT == "glsl"
+    ENV["XHLSL"] = LANG_CURRENT in ["hlsl9", "hlsl11"]
+    ENV["XHLSL9"] = LANG_CURRENT == "hlsl9"
+    ENV["XHLSL11"] = LANG_CURRENT == "hlsl11"
 
     try:
         for dirpath, dirnames, filenames in os.walk(PATH):
@@ -49,9 +111,9 @@ if __name__ == "__main__":
                 fout_dir = os.path.join(OPATH, dirpath[len(PATH) + 1:])
                 fout = os.path.join(fout_dir, f)
                 clear(fin)
-                expand(f, dirpath, XPATH, fout_dir, ARGS.l)
+                expand(f, dirpath, XPATH, fout_dir, LANG_CURRENT)
                 tokens = tokenize(fout)
-                processed = Preprocessor(tokens, env).process()
+                processed = Preprocessor(tokens, ENV).process()
                 with open(fout, "w") as f:
                     f.write(processed)
 

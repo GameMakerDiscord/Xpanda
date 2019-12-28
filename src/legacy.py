@@ -131,32 +131,6 @@ def expand(file, path, xshaders, out, lang):
 
     do_expand(os.path.join(path, file))
 
-    # def remove_lang_specific(string, lang):
-    #     l = "X" + lang.upper()
-    #     pattern = r"[^\S\n]*#\s*if\s+" + l + \
-    #         r"[\s\S]*#\s*endif\s*//\s*" + l + "\n?"
-    #     regex = re.compile(pattern)
-    #     return regex.sub(lambda m: "", string)
-
-    # def remove_guards(string, lang):
-    #     l = "X" + lang.upper()
-    #     string = re.sub(r"#\s*if\s+" + l + r"\s*\n", "", string)
-    #     return re.sub(r"\n\s*#\s*endif\s*//\s*" + l, "", string)
-
-    # for l in LANGS:
-    #     if lang == l:
-    #         other = list(LANGS)
-    #         other.remove(l)
-    #         for o in other:
-    #             data = remove_lang_specific(data, o)
-    #         data = remove_guards(data, lang)
-    #         break
-
-    # if not lang.startswith("hlsl"):
-    #     data = remove_lang_specific(data, "hlsl")
-    # else:
-    #     data = remove_guards(data, "hlsl")
-
     print("Expanded as " + lang)
     print("-" * 80)
 
