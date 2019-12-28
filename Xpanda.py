@@ -181,7 +181,7 @@ if __name__ == "__main__":
             "A": True,
             "B": False,
             "C": False,
-            "D": False,
+            "D": True,
         }
         tokens = tokenize("tests/test.glsl")
         processed = Preprocessor(tokens, env).process()

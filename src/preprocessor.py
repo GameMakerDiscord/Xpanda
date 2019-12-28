@@ -27,11 +27,18 @@ class Preprocessor(object):
         self._next()
         return token
 
-    def _replace_vars(self, t: Token) -> bool:
+    def _replace_vars(self, t: Token, python: bool = False) -> bool:
         val_orig = t.value
 
         for k, v in self.env.items():
-            t.value = re.sub(r"\b{}\b".format(k), str(v), t.value)
+            if python:
+                _str = str(v)
+            else:
+                if isinstance(v, bool):
+                    _str = "true" if v else "false"
+                else:
+                    _str = str(v)
+            t.value = re.sub(r"\b{}\b".format(k), _str, t.value)
 
         return t.value != val_orig
 
@@ -48,7 +55,7 @@ class Preprocessor(object):
         if not token or token.type_ != Token.Type.IF:
             return None
         self._next()
-        replaced = self._replace_vars(token)
+        replaced = self._replace_vars(token, python=True)
         evaluated = False
 
         processed = []
@@ -62,13 +69,13 @@ class Preprocessor(object):
                 raise
 
         if evaluated:
+            if res:
+                processed += self._process()
+            else:
+                self._process()
+
             # FIXME: WTF is this shit
             while True:
-                if res:
-                    processed += self._process()
-                else:
-                    self._process()
-
                 _next = self._peek()
 
                 if _next and _next.type_ == Token.Type.ENDIF:
@@ -79,7 +86,7 @@ class Preprocessor(object):
                     self._next()
 
                     if not res:
-                        self._replace_vars(_next)
+                        self._replace_vars(_next, python=True)
                         line = " ".join(_next.value.lstrip()[1:].split()[1:])
 
                         res = eval(line)
@@ -107,7 +114,35 @@ class Preprocessor(object):
         else:
             processed.append(token)
             processed += self._process()
-            processed.append(self._consume(Token.Type.ENDIF))
+
+            while True:
+                _next = self._peek()
+
+                if _next and _next.type_ == Token.Type.ENDIF:
+                    self._replace_vars(_next)
+                    self._next()
+                    processed.append(_next)
+                    break
+
+                elif _next and _next.type_ == Token.Type.ELIF:
+                    self._replace_vars(_next)
+                    self._next()
+                    processed.append(_next)
+                    processed += self._process()
+
+                elif _next and _next.type_ == Token.Type.ELSE:
+                    self._replace_vars(_next)
+                    self._next()
+                    processed.append(_next)
+                    processed += self._process()
+                    processed.append(self._consume(Token.Type.ENDIF))
+                    break
+
+                else:
+                    processed.append(
+                        self._consume(Token.Type.ENDIF, Token.Type.ELSE, Token.Type.ELIF)
+                    )
+                    break
 
         return processed
 
