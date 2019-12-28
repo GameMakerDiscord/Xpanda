@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
+import re
 from enum import Enum
-
 
 class Token(object):
     class Type(Enum):
