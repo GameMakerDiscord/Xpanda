@@ -126,7 +126,7 @@ In the current implementation, expressions are evaluated using Python's `eval`. 
 
 C-like operators/keywords `&&`, `||`, `!`, `true`, `false` in expressions are automatically translated to their Python counterparts before eval. **You shouldn't directly use Python's `and`, `or`, `not`, `True`, `False` in expressions, since their evaluation process may be a subject to change in the future!**
 
-## Examples:
+### Examples:
 ```cpp
 #if XGLSL
   // Code to include only in GLSL shaders
