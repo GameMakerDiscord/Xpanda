@@ -47,6 +47,8 @@ class Preprocessor(object):
                 "&&": " and ",
                 "||": " or ",
                 "!": " not ",
+                "true": "True",
+                "false": "False",
             }
             for k, v in replace.items():
                 t.value = t.value.replace(k, v)
