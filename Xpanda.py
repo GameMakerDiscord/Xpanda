@@ -179,7 +179,7 @@ if __name__ == "__main__":
     try:
         env = {
             "A": True,
-            "B": False,
+            "B": True,
             "C": False,
             "D": True,
         }

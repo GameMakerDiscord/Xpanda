@@ -32,13 +32,28 @@ class Preprocessor(object):
 
         for k, v in self.env.items():
             if python:
-                _str = str(v)
+                _str = " {} ".format(str(v))
             else:
                 if isinstance(v, bool):
                     _str = "true" if v else "false"
                 else:
                     _str = str(v)
             t.value = re.sub(r"\b{}\b".format(k), _str, t.value)
+
+        # FIXME: OMFG
+        if python:
+            t.value = t.value.replace("!=", "__NEQ__")
+            replace = {
+                "&&": " and ",
+                "||": " or ",
+                "!": " not ",
+            }
+            for k, v in replace.items():
+                t.value = t.value.replace(k, v)
+            t.value = t.value.replace("__NEQ__", " != ")
+
+            if t.value != val_orig:
+                print("Python:", t.value)
 
         return t.value != val_orig
 
