@@ -77,7 +77,7 @@ where:
 
 The process of expanding the includes is recursive, that means you can also include files from within the included files. Xpanda also deals with cyclic reference by simply never including the same file into one shader twice. It is also not necessary to delete the included code by hand before running Xpanda again, it's done automatically!
 
-**Note:** Including HLSL code from shader earlier specified as GLSL (or vice versa) will cause error!
+**Including HLSL code from shader earlier specified as GLSL (or vice versa) will cause error!**
 
 ## Branching
 Xpanda's preprocessor is also capable of branching:
