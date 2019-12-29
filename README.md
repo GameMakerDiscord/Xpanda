@@ -16,6 +16,7 @@ Donate: [PayPal.Me](https://www.paypal.me/kraifpatrik/1usd)
   - [Include](#include)
   - [Branching](#branching)
 * [Running Xpanda](#running-xpanda)
+* [Projects using Xpanda](#projects-using-xpanda)
 
 # Features
 * Recursive inclusion of external files
@@ -161,3 +162,7 @@ Xpanda has a just a few command line parameters. To help you get started, you ca
 ```cmd
 Xpanda -h
 ```
+
+# Projects using Xpanda
+* [BBP](https://blueburn.cz/index.php?menu=bbp)
+* Your project here?
