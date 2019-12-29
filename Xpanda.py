@@ -15,7 +15,7 @@ LANG_DEFAULT = "glsl"
 
 def print_help():
     print((
-        "Usage: Xpanda [-h] PATH [--x EXTERNAL] [--o OUT] [--l LANG] [--m MINIFY][CONSTANT=value ...]\n"
+        "Usage: Xpanda [-h] PATH [--x EXTERNAL] [--o OUT] [--l LANG] [--m MINIFY] [CONSTANT=value ...]\n"
         "\n"
         "Includes code from external files into your shaders.\n"
         "\n"
