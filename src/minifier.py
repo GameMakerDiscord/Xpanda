@@ -3,6 +3,10 @@ import os
 from enum import Enum
 
 
+def can_collapse(char: str) -> bool:
+    return char in r"+-*/!~|&=#$<>[]{}().:,;?"
+
+
 def minify(line: str) -> str:
     result = ""
     is_string = ""  # ' or " based on string delimiter
@@ -29,10 +33,14 @@ def minify(line: str) -> str:
         else:
             # Remove multiple consecutive whitespace characters from everywhere else
             if char.isspace():
+                if can_collapse(char_last):
+                    continue
                 if not char_last.isspace():
                     char = " "
                     result += char
             else:
+                if char_last.isspace() and can_collapse(char):
+                    result = result[:-1]
                 result += char
 
         if is_comment:
@@ -42,13 +50,16 @@ def minify(line: str) -> str:
             elif is_comment == "*" and char == "/" and char_last == "*":
                 # End of multi-line comment
                 is_comment = ""
-        elif char_last != "\\" and char in ["'", '"']:
+        elif char_last != "\\" and char in "'\"":
             # Start and end of strings
             if not is_string:
                 is_string = char
             elif is_string == char:
                 is_string = ""
 
-        char_last = char
+        try:
+            char_last = result[-1]
+        except:
+            pass
 
     return result.strip()
