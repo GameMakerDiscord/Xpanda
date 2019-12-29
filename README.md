@@ -8,6 +8,7 @@ Maintained by: [kraifpatrik](https://github.com/kraifpatrik)
 Donate: [PayPal.Me](https://www.paypal.me/kraifpatrik/1usd)
 
 # Table of Contents
+* [Features](#features)
 * [Installation](#installation)
 * [Writing compatible shader code](#writing-compatible-shader-code)
 * [Constants](#constants)
@@ -15,6 +16,12 @@ Donate: [PayPal.Me](https://www.paypal.me/kraifpatrik/1usd)
   - [Include](#include)
   - [Branching](#branching)
 * [Running Xpanda](#running-xpanda)
+
+# Features
+* Recursive inclusion of external files
+* Support for sharing code between GLSL and HLSL
+* Custom constants and branching directives evaluation - great for shader permutations!
+* Code minification - remove comments and redundant whitespace from code - in case you don't want to include them in your executables!
 
 # Installation
 * Requires [Python 3](https://www.python.org/)
