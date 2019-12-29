@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 import re
 
+from .minifier import minify
 from .tokenizer import Token
 
 
 class Preprocessor(object):
-    def __init__(self, tokens: list, env: dict = {}):
+    def __init__(self, tokens: list, env: dict = {}, minify: bool = False):
         self.index = 0
         self.tokens = tokens
         self.env = env
+        self.minify = minify
 
     def _next(self):
         self.index += 1
@@ -59,12 +61,24 @@ class Preprocessor(object):
 
         return t.value != val_orig
 
+    def _process_directive(self):
+        token = self._peek()
+        if not token or token.type_ != Token.Type.DIRECTIVE:
+            return None
+        self._next()
+        self._replace_vars(token)
+        if self.minify:
+            token.value = minify(token.value) + "\n"
+        return [token]
+
     def _process_pragma(self):
         token = self._peek()
         if not token or token.type_ != Token.Type.PRAGMA:
             return None
         self._next()
         self._replace_vars(token)
+        if self.minify:
+            token.value = minify(token.value) + "\n"
         return [token]
 
     def _process_if(self):
@@ -85,6 +99,9 @@ class Preprocessor(object):
             token.value = value_backup
             self._replace_vars(token)
             evaluated = False
+
+        if self.minify:
+            token.value = minify(token.value) + "\n"
 
         if evaluated:
             if res:
@@ -140,6 +157,8 @@ class Preprocessor(object):
 
                 if _next and _next.type_ == Token.Type.ENDIF:
                     self._replace_vars(_next)
+                    if self.minify:
+                        _next.value = minify(_next.value) + "\n"
                     self._next()
                     processed.append(_next)
                     break
@@ -147,22 +166,31 @@ class Preprocessor(object):
                 elif _next and _next.type_ == Token.Type.ELIF:
                     self._replace_vars(_next)
                     self._next()
+                    if self.minify:
+                        _next.value = minify(_next.value) + "\n"
                     processed.append(_next)
                     processed += self._process()
 
                 elif _next and _next.type_ == Token.Type.ELSE:
                     self._replace_vars(_next)
                     self._next()
+                    if self.minify:
+                        _next.value = minify(_next.value) + "\n"
                     processed.append(_next)
                     processed += self._process()
-                    processed.append(self._consume(Token.Type.ENDIF))
+                    _next = self._consume(Token.Type.ENDIF)
+                    if self.minify:
+                        _next.value = minify(_next.value) + "\n"
+                    processed.append(_next)
                     break
 
                 else:
-                    processed.append(
-                        self._consume(Token.Type.ENDIF,
-                                      Token.Type.ELSE,
-                                      Token.Type.ELIF))
+                    _next = self._consume(Token.Type.ENDIF,
+                                          Token.Type.ELSE,
+                                          Token.Type.ELIF)
+                    if self.minify:
+                        _next.value = minify(_next.value) + "\n"
+                    processed.append(_next)
                     break
 
         return processed
@@ -173,12 +201,21 @@ class Preprocessor(object):
             return None
         self._next()
         self._replace_vars(token)
+        if self.minify:
+            token.value = minify(token.value)
+            if token.value:
+                token.value += "\n"
         return [token]
 
     def _process(self, toplevel=False) -> list:
         processed = []
 
         while True:
+            _directive = self._process_directive()
+            if _directive:
+                processed += _directive
+                continue
+
             _pragma = self._process_pragma()
             if _pragma:
                 processed += _pragma

@@ -5,12 +5,13 @@ from enum import Enum
 class Token(object):
     class Type(Enum):
         CODE = 0
-        PRAGMA = 1
-        IF = 2
-        ELSE = 3
-        ELIF = 4
-        ENDIF = 5
-        EOF = 6
+        DIRECTIVE = 1
+        PRAGMA = 2
+        IF = 3
+        ELSE = 4
+        ELIF = 5
+        ENDIF = 6
+        EOF = 7
 
     def __init__(self, type_: int, value: str):
         self.type_ = type_
@@ -31,7 +32,7 @@ class Token(object):
             return Token.Type.ELIF
         if str_ == "endif":
             return Token.Type.ENDIF
-        return None
+        return Token.Type.DIRECTIVE
 
 
 def get_first_word(line: str) -> str:

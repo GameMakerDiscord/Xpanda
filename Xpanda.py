@@ -15,7 +15,7 @@ LANG_DEFAULT = "glsl"
 
 def print_help():
     print((
-        "Usage: Xpanda [-h] PATH [--x EXTERNAL] [--o OUT] [--l LANG] [CONSTANT=value ...]\n"
+        "Usage: Xpanda [-h] PATH [--x EXTERNAL] [--o OUT] [--l LANG] [--m MINIFY][CONSTANT=value ...]\n"
         "\n"
         "Includes code from external files into your shaders.\n"
         "\n"
@@ -27,6 +27,11 @@ def print_help():
         "  OUT            - Output directory for expanded shaders, PATH is used if not specified.\n"
         "  LANG           - Fallback shader language when not specified by include.\n"
         "                   Options are: {langs} (default is {lang_def}).\n"
+        "  MINIFY         - Enable minification. This removes comments and whitespace.\n"
+        "                   Possible values are:\n"
+        "                     - 0 - No minification. Leave code as it is.\n"
+        "                     - 1 - Minify only code from included files. [NOT YET SUPPORTED!]\n"
+        "                     - 2 - Minify everything.\n"
         "  CONSTANT=value - Custom constant definition. Values can be either numbers, booleans or\n"
         "                   any string. Maximum number of constants is not limited.\n"
     ).format(
@@ -44,6 +49,7 @@ if __name__ == "__main__":
     OPATH = ""
     LANG_CURRENT = "glsl"
     ENV = {}
+    MINIFY = False
 
     index = 1
     try:
@@ -56,6 +62,9 @@ if __name__ == "__main__":
             elif arg == "--x":
                 index += 1
                 XPATH = os.path.realpath(sys.argv[index])
+            elif arg == "--m":
+                index += 1
+                MINIFY = int(sys.argv[index]) >= 2
             elif arg == "--o":
                 index += 1
                 OPATH = os.path.realpath(sys.argv[index])
@@ -90,7 +99,7 @@ if __name__ == "__main__":
         exit()
 
     if PATH is None:
-        print("Argument PATH not defined! Use -h to show help message.")
+        print("Argument PATH is not a directory! Use -h to show help message.")
         exit()
 
     OPATH = os.path.realpath(OPATH) if OPATH else PATH
@@ -113,7 +122,7 @@ if __name__ == "__main__":
                 clear(fin)
                 expand(f, dirpath, XPATH, fout_dir, LANG_CURRENT)
                 tokens = tokenize(fout)
-                processed = Preprocessor(tokens, ENV).process()
+                processed = Preprocessor(tokens, env=ENV, minify=MINIFY).process()
                 with open(fout, "w") as f:
                     f.write(processed)
 
