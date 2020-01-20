@@ -37,11 +37,11 @@ surWork = noone;
 surLightBloom = noone;
 
 // Camera
-z          = 1;
-pitch      = 0;
-fov        = 60;
-clipNear   = 1;
-clipFar    = 8192;
+z = 1;
+pitch = 0;
+fov = 60;
+clipNear = 1;
+clipFar = 8192;
 mouseXLast = 0;
 mouseYLast = 0;
 

@@ -22,5 +22,5 @@ Vec3 xEncodeDepth(float d)
 float xDecodeDepth(Vec3 c)
 {
 	const float inv255 = 1.0 / 255.0;
-	return c.x + c.y*inv255 + c.z*inv255*inv255;
+	return c.x + (c.y * inv255) + (c.z * inv255 * inv255);
 }

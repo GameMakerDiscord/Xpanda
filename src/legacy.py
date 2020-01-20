@@ -23,7 +23,8 @@ def handle_compatibility(string, lang):
             "DDY": "dFdy",
             "Frac": "fract",
             "Lerp": "mix",
-            "Rsqrt": "inversesqrt"
+            "Rsqrt": "inversesqrt",
+            "Mod": "mod",
         }
     elif lang.startswith("hlsl"):
         names = {
@@ -37,7 +38,8 @@ def handle_compatibility(string, lang):
             "DDY": "ddy",
             "Frac": "frac",
             "Lerp": "lerp",
-            "Rsqrt": "rsqrt"
+            "Rsqrt": "rsqrt",
+            "Mod": "fmod",
         }
         if lang == "hlsl9":
             names["Texture2D"] = "sampler2D"
@@ -132,7 +134,6 @@ def expand(file, path, xshaders, out, lang):
     do_expand(os.path.join(path, file))
 
     print("Expanded as " + lang)
-    print("-" * 80)
 
     try:
         os.mkdir(out)
@@ -141,3 +142,5 @@ def expand(file, path, xshaders, out, lang):
 
     with open(os.path.join(out, file), "w") as f:
         f.write(data)
+
+    return lang

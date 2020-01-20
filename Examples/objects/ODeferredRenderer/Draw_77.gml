@@ -1,11 +1,11 @@
 ///@desc Render
 var _shader;
-var _screenWidth  = window_get_width();
+var _screenWidth = window_get_width();
 var _screenHeight = window_get_height();
-var _texAlbedo    = sprite_get_texture(SprDefault, 0);
-var _texNormal    = sprite_get_texture(SprDefault, 1);
-var _texMaterial  = sprite_get_texture(SprDefault, 2);
-var _texEmissive  = sprite_get_texture(SprDefault, 3);
+var _texAlbedo = sprite_get_texture(SprDefault, 0);
+var _texNormal = sprite_get_texture(SprDefault, 1);
+var _texMaterial = sprite_get_texture(SprDefault, 2);
+var _texEmissive = sprite_get_texture(SprDefault, 3);
 
 // Check surfaces
 surface_check(application_surface, _screenWidth, _screenHeight);
@@ -67,15 +67,15 @@ if (instance_exists(OLightPoint))
 	_shader = ShShadowMap;
 	shader_set(_shader);
 	var _uLightPos = shader_get_uniform(_shader, "u_vLightPos");
-	var _uClipFar  = shader_get_uniform(_shader, "u_fClipFar");
+	var _uClipFar = shader_get_uniform(_shader, "u_fClipFar");
 
 	with (OLightPoint)
 	{
 		if (!surface_exists(shadowmap))
 		{
 			var _world = matrix_build(0, 0, 0, 0, 0, 0, 40, 40, 40);
-			var _proj  = cubemap_get_projection_matrix(0.001, radius);
-			var _pos   = [x, y, z];
+			var _proj = cubemap_get_projection_matrix(0.001, radius);
+			var _pos = [x, y, z];
 			for (var i = 0; i < 6; ++i)
 			{
 				surface_set_target(cubemap_get_surface(cubemap, i));
@@ -166,10 +166,10 @@ ssao_draw(
 
 ////////////////////////////////////////////////////////////////////////////////
 // Light pass
-var _tanFovY          = dtan(fov * 0.5);
-var _tanAspect        = [_tanFovY * _aspect, -_tanFovY];
-var _texSceneNormal   = surface_get_texture(surGBuffer[EGBuffer.NormalRoughness]);
-var _texSceneDepth    = surface_get_texture(surGBuffer[EGBuffer.DepthMetalness]);
+var _tanFovY = dtan(fov * 0.5);
+var _tanAspect = [_tanFovY * _aspect, -_tanFovY];
+var _texSceneNormal = surface_get_texture(surGBuffer[EGBuffer.NormalRoughness]);
+var _texSceneDepth = surface_get_texture(surGBuffer[EGBuffer.DepthMetalness]);
 var _texSceneEmissive = surface_get_texture(surGBuffer[EGBuffer.EmissiveTranslucency]);
 
 surface_set_target_ext(0, application_surface);
@@ -206,13 +206,13 @@ if (instance_exists(OLightDirectional))
 	texture_set_stage(2, _texSceneDepth);
 	//texture_set_stage(3, _texSceneEmissive);
 
-	var _inv255         = 1 / 255;
-	var _surAlbedo      = surGBuffer[EGBuffer.AlbedoAO];
-	var uLightDir       = shader_get_uniform(_shader, "u_vLightDir");
-	var uShadowMapArea  = shader_get_uniform(_shader, "u_fShadowMapArea");
+	var _inv255 = 1 / 255;
+	var _surAlbedo = surGBuffer[EGBuffer.AlbedoAO];
+	var uLightDir = shader_get_uniform(_shader, "u_vLightDir");
+	var uShadowMapArea = shader_get_uniform(_shader, "u_fShadowMapArea");
 	var uShadowMapTexel = shader_get_uniform(_shader, "u_vShadowMapTexel");
-	var uLightCol       = shader_get_uniform(_shader, "u_vLightCol");
-	var uMatShadowMap   = shader_get_uniform(_shader, "u_mShadowMap");
+	var uLightCol = shader_get_uniform(_shader, "u_vLightCol");
+	var uMatShadowMap = shader_get_uniform(_shader, "u_mShadowMap");
 
 	with (OLightDirectional)
 	{
@@ -257,10 +257,10 @@ if (instance_exists(OLightPoint))
 	gpu_set_cullmode(cull_clockwise);
 	gpu_set_zfunc(cmpfunc_greaterequal);
 
-	var _inv255          = 1 / 255;
-	var _texSceneAlbedo  = surface_get_texture(surGBuffer[EGBuffer.AlbedoAO]);
-	var _uLightPos       = shader_get_uniform(_shader, "u_vLightPos");
-	var _uLightCol       = shader_get_uniform(_shader, "u_vLightCol");
+	var _inv255 = 1 / 255;
+	var _texSceneAlbedo = surface_get_texture(surGBuffer[EGBuffer.AlbedoAO]);
+	var _uLightPos = shader_get_uniform(_shader, "u_vLightPos");
+	var _uLightCol = shader_get_uniform(_shader, "u_vLightCol");
 	var _uShadowMapTexel = shader_get_uniform(_shader, "u_vShadowMapTexel");
 
 	with (OLightPoint)
@@ -307,8 +307,8 @@ var _appSurH = surface_get_height(application_surface);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Light bloom
-var _width    = surface_get_width(surWork);
-var _height   = surface_get_height(surWork);
+var _width = surface_get_width(surWork);
+var _height = surface_get_height(surWork);
 surLightBloom = surface_check(surLightBloom, _width, _height);
 
 surface_set_target(surLightBloom);
@@ -340,7 +340,7 @@ var _shader = ShPostProcess;
 shader_set(_shader);
 texture_set_stage(shader_get_sampler_index(_shader, "u_sLut"), sprite_get_texture(SprColorGradingLut, 0));
 shader_set_uniform_f(shader_get_uniform(_shader, "u_fLutIndex"), keyboard_check(ord("C")));
-shader_set_uniform_f(shader_get_uniform(_shader, "u_vTexel"), 1/_appSurW, 1/_appSurH);
+shader_set_uniform_f(shader_get_uniform(_shader, "u_vTexel"), 1 / _appSurW, 1 / _appSurH);
 shader_set_uniform_f(shader_get_uniform(_shader, "u_fDistortion"), 3);
 draw_surface(application_surface, 0, 0);
 shader_reset();

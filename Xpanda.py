@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import copy
 import os
 import sys
 
@@ -108,10 +109,6 @@ if __name__ == "__main__":
         print("Unknown language {}!".format(LANG_CURRENT))
         exit()
 
-    ENV["XGLSL"] = LANG_CURRENT == "glsl"
-    ENV["XHLSL"] = LANG_CURRENT in ["hlsl9", "hlsl11"]
-    ENV["XHLSL9"] = LANG_CURRENT == "hlsl9"
-    ENV["XHLSL11"] = LANG_CURRENT == "hlsl11"
 
     try:
         for dirpath, dirnames, filenames in os.walk(PATH):
@@ -120,11 +117,19 @@ if __name__ == "__main__":
                 fout_dir = os.path.join(OPATH, dirpath[len(PATH) + 1:])
                 fout = os.path.join(fout_dir, f)
                 clear(fin)
-                expand(f, dirpath, XPATH, fout_dir, LANG_CURRENT)
+                _lang = expand(f, dirpath, XPATH, fout_dir, LANG_CURRENT)
+
+                _env = copy.deepcopy(ENV)
+                _env["XGLSL"] = _lang == "glsl"
+                _env["XHLSL"] = _lang in ["hlsl9", "hlsl11"]
+                _env["XHLSL9"] = _lang == "hlsl9"
+                _env["XHLSL11"] = _lang == "hlsl11"
+
                 tokens = tokenize(fout)
-                processed = Preprocessor(tokens, env=ENV, minify=MINIFY).process()
+                processed = Preprocessor(tokens, env=_env, minify=MINIFY).process()
                 with open(fout, "w") as f:
                     f.write(processed)
+                print("-" * 80)
 
     except KeyboardInterrupt:
         # Ignore Ctrl+C

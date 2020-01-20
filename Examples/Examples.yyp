@@ -47,6 +47,14 @@
             }
         },
         {
+            "Key": "0a5a57e0-81c6-405d-9adf-7b7d5a76caaa",
+            "Value": {
+                "id": "8cb77a99-36f9-44d1-a94b-85cb35ab0e01",
+                "resourcePath": "sprites\\SprEnvironmentBrdf\\SprEnvironmentBrdf.yy",
+                "resourceType": "GMSprite"
+            }
+        },
+        {
             "Key": "0b7f25d6-76fc-4665-9de6-30e136c2e935",
             "Value": {
                 "id": "82858698-2241-4fee-af5d-96689a48688e",
@@ -236,6 +244,14 @@
                 "id": "ba794936-0939-42a4-bc0d-2e8d2792ff57",
                 "resourcePath": "views\\4b697f62-5374-4a97-ae0c-97c462018cc5.yy",
                 "resourceType": "GMFolder"
+            }
+        },
+        {
+            "Key": "4b6dd146-ffa5-48f3-a761-02551940f77c",
+            "Value": {
+                "id": "6d2c42ec-5c91-40bc-984e-cee40f9a69e6",
+                "resourcePath": "shaders\\ShIntegrateBRDF\\ShIntegrateBRDF.yy",
+                "resourceType": "GMShader"
             }
         },
         {

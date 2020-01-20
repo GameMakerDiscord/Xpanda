@@ -6,10 +6,10 @@
 Vec3 xColorGrade(Vec3 color, Texture2D lut, float index)
 {
 	Vec2 uv;
-	uv.x = color.x*0.05859375;
-	uv.y = color.y*0.05859375 + index*0.0625;
-	float b15 = color.b*15.0;
-	float z0 = floor(b15)*0.0625;
+	uv.x = color.x * 0.05859375;
+	uv.y = color.y * 0.05859375 + index * 0.0625;
+	float b15 = color.b * 15.0;
+	float z0 = floor(b15) * 0.0625;
 	float z1 = z0 + 0.0625;
 	Vec2 uv2 = uv + 0.001953125;
 	return Lerp(

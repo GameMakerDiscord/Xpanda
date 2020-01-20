@@ -24,6 +24,8 @@ class Preprocessor(object):
     def _consume(self, *args) -> Token:
         token = self._peek()
         if not token or token.type_ not in args:
+            for t in self.tokens:
+                print(t)
             raise Exception("Syntax error: {} expected, found {}!".format(
                 str(args), token.type_))
         self._next()

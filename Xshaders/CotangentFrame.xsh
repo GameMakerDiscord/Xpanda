@@ -12,8 +12,8 @@ Mat3 xCotangentFrame(Vec3 N, Vec3 V, Vec2 uv)
 	Vec2 duv2 = DDY(uv);
 	Vec3 dp2perp = cross(dp2, N);
 	Vec3 dp1perp = cross(N, dp1);
-	Vec3 T = dp2perp*duv1.x + dp1perp*duv2.x;
-	Vec3 B = dp2perp*duv1.y + dp1perp*duv2.y;
+	Vec3 T = dp2perp * duv1.x + dp1perp * duv2.x;
+	Vec3 B = dp2perp * duv1.y + dp1perp * duv2.y;
 	float invmax = Rsqrt(max(dot(T, T), dot(B, B)));
-	return Mat3(T*invmax, B*invmax, N);
+	return Mat3(T * invmax, B * invmax, N);
 }

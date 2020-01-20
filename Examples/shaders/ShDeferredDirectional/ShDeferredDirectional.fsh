@@ -51,7 +51,7 @@ float3 xEncodeDepth(float d)
 float xDecodeDepth(float3 c)
 {
 	const float inv255 = 1.0 / 255.0;
-	return c.x + c.y*inv255 + c.z*inv255*inv255;
+	return c.x + (c.y * inv255) + (c.z * inv255 * inv255);
 }
 
 // include("DepthEncoding.xsh")
@@ -111,47 +111,60 @@ float xShadowMapCompare(Texture2D shadowMap, float2 texel, float2 uv, float comp
 #define X_2_PI 6.28318530718
 
 /// @return x^2
-float xPow2(float x) { return (x*x); }
+float xPow2(float x) { return (x * x); }
 
 /// @return x^3
-float xPow3(float x) { return (x*x*x); }
+float xPow3(float x) { return (x * x * x); }
 
 /// @return x^4
-float xPow4(float x) { return (x*x*x*x); }
+float xPow4(float x) { return (x * x * x * x); }
 
 /// @return x^5
-float xPow5(float x) { return (x*x*x*x*x); }
+float xPow5(float x) { return (x * x * x * x * x); }
 
 
-/// @desc Default specular color for dielectrics (4% based on
-///       http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf).
+/// @desc Default specular color for dielectrics
+/// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
 #define X_F0_DEFAULT float3(0.04, 0.04, 0.04)
 
 /// @desc Normal distribution function
 /// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
 float xSpecularD_GGX(float roughness, float NdotH)
 {
-	float r2 = roughness*roughness;
-	float a = NdotH*NdotH*(r2-1.0) + 1.0;
-	return r2 / (X_PI*a*a);
-	// return r2 / (X_PI * xPow2(xPow2(NdotH) * (r2-1.0) + 1.0);
+	float r2 = roughness * roughness;
+	float a = NdotH * NdotH * (r2 - 1.0) + 1.0;
+	return r2 / (X_PI * a * a);
+	// return r2 / (X_PI * xPow2(xPow2(NdotH) * (r2 - 1.0) + 1.0);
+}
+
+/// @desc Roughness remapping for analytic lights.
+/// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
+float xK_Analytic(float roughness)
+{
+	return xPow2(roughness + 1.0) * 0.125;
+}
+
+/// @desc Roughness remapping for IBL lights.
+/// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
+float xK_IBL(float roughness)
+{
+	return xPow2(roughness) * 0.5;
 }
 
 /// @desc Geometric attenuation
+/// @param k Use either xK_Analytic for analytic lights or xK_IBL for image based lighting.
 /// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
-float xSpecularG_Schlick(float roughness, float NdotL, float NdotV)
+float xSpecularG_Schlick(float k, float NdotL, float NdotV)
 {
-	float k = xPow2(roughness+1.0) * 0.125;
-	float oneMinusK = 1.0-k;
-	return (NdotL / (NdotL*oneMinusK + k))
-		* (NdotV / (NdotV*oneMinusK + k));
+	return (NdotL / (NdotL * (1.0 - k) + k))
+		* (NdotV / (NdotV * (1.0 - k) + k));
 }
 
 /// @desc Fresnel
 /// @source https://en.wikipedia.org/wiki/Schlick%27s_approximation
 float3 xSpecularF_Schlick(float3 f0, float NdotV)
 {
-	return f0 + (1.0-f0) * xPow5(1.0-NdotV); 
+	return f0 + (1.0 - f0) * xPow5(1.0 - NdotV); 
 }
 
 /// @desc Cook-Torrance microfacet specular shading
@@ -165,7 +178,7 @@ float3 xBRDF(float3 f0, float roughness, float NdotL, float NdotV, float NdotH)
 	float3 specular = xSpecularD_GGX(roughness, NdotH)
 		* xSpecularF_Schlick(f0, NdotV)
 		* xSpecularG_Schlick(roughness, NdotL, NdotH);
-	return specular / (4.0*NdotL*NdotV);
+	return specular / (4.0 * NdotL * NdotV);
 }
 
 // include("BRDF.xsh")
