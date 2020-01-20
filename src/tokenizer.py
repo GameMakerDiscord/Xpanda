@@ -8,10 +8,12 @@ class Token(object):
         DIRECTIVE = 1
         PRAGMA = 2
         IF = 3
-        ELSE = 4
-        ELIF = 5
-        ENDIF = 6
-        EOF = 7
+        IFDEF = 4
+        IFNDEF = 5
+        ELSE = 6
+        ELIF = 7
+        ENDIF = 8
+        EOF = 9
 
     def __init__(self, type_: int, value: str):
         self.type_ = type_
@@ -26,6 +28,10 @@ class Token(object):
             return Token.Type.PRAGMA
         if str_ == "if":
             return Token.Type.IF
+        if str_ == "ifdef":
+            return Token.Type.IFDEF
+        if str_ == "ifndef":
+            return Token.Type.IFNDEF
         if str_ == "else":
             return Token.Type.ELSE
         if str_ == "elif":

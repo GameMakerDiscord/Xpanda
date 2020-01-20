@@ -3,7 +3,7 @@
 //> Comment out if you are using view-space normals instead
 //> of world-space. This line is also present in the xSsaoInit script,
 //> so don't forget to comment out that one as well!
-#define X_SSAO_WORLD_SPACE_NORMALS 1
+#define X_SSAO_WORLD_SPACE_NORMALS
 
 //> Must be the same values as in the xSsaoInit script!
 #define X_SSAO_KERNEL_SIZE 16
@@ -13,7 +13,7 @@ varying vec2 v_vTexCoord;
 #define texDepth  gm_BaseTexture
 uniform sampler2D texNormal;
 uniform sampler2D texRandom;
-#if X_SSAO_WORLD_SPACE_NORMALS
+#ifdef X_SSAO_WORLD_SPACE_NORMALS
 uniform mat4 u_mView;
 #endif
 uniform mat4  u_mProjection;
@@ -93,7 +93,7 @@ void main()
 
 	// Calc. TBN matrix
 	vec3 normal    = normalize(texture2D(texNormal, v_vTexCoord).rgb * 2.0 - 1.0);
-#if X_SSAO_WORLD_SPACE_NORMALS
+#ifdef X_SSAO_WORLD_SPACE_NORMALS
 	normal         = normalize((u_mView * vec4(normal, 0.0)).xyz);
 #endif
 	vec3 random    = texture2D(texRandom, v_vTexCoord * u_vNoiseScale).xyz * 2.0 - 1.0;

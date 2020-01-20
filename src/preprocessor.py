@@ -24,8 +24,6 @@ class Preprocessor(object):
     def _consume(self, *args) -> Token:
         token = self._peek()
         if not token or token.type_ not in args:
-            for t in self.tokens:
-                print(t)
             raise Exception("Syntax error: {} expected, found {}!".format(
                 str(args), token.type_))
         self._next()
@@ -197,6 +195,49 @@ class Preprocessor(object):
 
         return processed
 
+    def _process_ifdef(self):
+        token = self._peek()
+        if not token or token.type_ != Token.Type.IFDEF:
+            return None
+        self._next()
+        self._replace_vars(token)
+        if self.minify:
+            token.value = minify(token.value) + "\n"
+
+        processed = [token]
+        
+        while True:
+            _next = self._peek()
+            if _next.type_ == Token.Type.ENDIF:
+                processed.append(self._consume(Token.Type.ENDIF))
+                break
+            else:
+                processed += self._process()
+
+        return processed
+
+
+    def _process_ifndef(self):
+        token = self._peek()
+        if not token or token.type_ != Token.Type.IFNDEF:
+            return None
+        self._next()
+        self._replace_vars(token)
+        if self.minify:
+            token.value = minify(token.value) + "\n"
+
+        processed = [token]
+        
+        while True:
+            _next = self._peek()
+            if _next.type_ == Token.Type.ENDIF:
+                processed.append(self._consume(Token.Type.ENDIF))
+                break
+            else:
+                processed += self._process()
+
+        return processed
+
     def _process_code(self):
         token = self._peek()
         if not token or token.type_ != Token.Type.CODE:
@@ -227,6 +268,16 @@ class Preprocessor(object):
             if _if:
                 processed += _if
                 continue
+
+            _ifdef = self._process_ifdef()
+            if _ifdef:
+                processed += _ifdef
+                continue 
+
+            _ifndef = self._process_ifndef()
+            if _ifndef:
+                processed += _ifndef
+                continue 
 
             _code = self._process_code()
             if _code:
