@@ -3,6 +3,7 @@
 import copy
 import os
 import sys
+import traceback
 
 from src.common import *
 from src.legacy import *
@@ -84,7 +85,7 @@ if __name__ == "__main__":
                 ENV[k] = v
             elif not PATH:
                 p = os.path.realpath(arg)
-                if os.path.isdir(p):
+                if os.path.isdir(p) or os.path.isfile(p):
                     PATH = p
             else:
                 raise Exception(
@@ -100,7 +101,7 @@ if __name__ == "__main__":
         exit()
 
     if PATH is None:
-        print("Argument PATH is not a directory! Use -h to show help message.")
+        print("Argument PATH must be a directory or a file! Use -h to show help message.")
         exit()
 
     OPATH = os.path.realpath(OPATH) if OPATH else PATH
@@ -109,30 +110,35 @@ if __name__ == "__main__":
         print("Unknown language {}!".format(LANG_CURRENT))
         exit()
 
+    def _process_file(fin, fout):
+        clear(fin)
+        _lang = expand(fin, XPATH, fout, LANG_CURRENT)
+
+        _env = copy.deepcopy(ENV)
+        _env["XGLSL"] = _lang == "glsl"
+        _env["XHLSL"] = _lang in ["hlsl9", "hlsl11"]
+        _env["XHLSL9"] = _lang == "hlsl9"
+        _env["XHLSL11"] = _lang == "hlsl11"
+
+        tokens = tokenize(fout)
+        processed = Preprocessor(tokens, env=_env, minify=MINIFY).process()
+        with open(fout, "w") as f:
+            f.write(processed)
+        print("-" * 80)
 
     try:
-        for dirpath, dirnames, filenames in os.walk(PATH):
-            for f in filenames:
-                fin = os.path.join(dirpath, f)
-                fout_dir = os.path.join(OPATH, dirpath[len(PATH) + 1:])
-                fout = os.path.join(fout_dir, f)
-                clear(fin)
-                _lang = expand(f, dirpath, XPATH, fout_dir, LANG_CURRENT)
-
-                _env = copy.deepcopy(ENV)
-                _env["XGLSL"] = _lang == "glsl"
-                _env["XHLSL"] = _lang in ["hlsl9", "hlsl11"]
-                _env["XHLSL9"] = _lang == "hlsl9"
-                _env["XHLSL11"] = _lang == "hlsl11"
-
-                tokens = tokenize(fout)
-                processed = Preprocessor(tokens, env=_env, minify=MINIFY).process()
-                with open(fout, "w") as f:
-                    f.write(processed)
-                print("-" * 80)
+        if os.path.isfile(PATH):
+            _process_file(PATH, OPATH)
+        else:
+            for dirpath, dirnames, filenames in os.walk(PATH):
+                for f in filenames:
+                    _process_file(
+                        os.path.join(dirpath, f),
+                        os.path.join(OPATH, f))
 
     except KeyboardInterrupt:
         # Ignore Ctrl+C
         print()
     except Exception as e:
         print("ERROR:", str(e))
+        print(traceback.format_exc())

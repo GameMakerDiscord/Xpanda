@@ -84,7 +84,7 @@ def clear(file):
             f.write(data)
 
 
-def expand(file, path, xshaders, out, lang):
+def expand(file, xshaders, out, lang):
     """ Recursively expands pragma includes in the file. """
     data = ""
     includes = []
@@ -131,16 +131,16 @@ def expand(file, path, xshaders, out, lang):
                     else:
                         data += l
 
-    do_expand(os.path.join(path, file))
+    do_expand(file)
 
     print("Expanded as " + lang)
 
     try:
-        os.mkdir(out)
+        os.mkdir(os.path.dirname(out))
     except:
         pass
 
-    with open(os.path.join(out, file), "w") as f:
+    with open(out, "w") as f:
         f.write(data)
 
     return lang
