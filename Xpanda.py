@@ -134,7 +134,7 @@ if __name__ == "__main__":
                 for f in filenames:
                     _process_file(
                         os.path.join(dirpath, f),
-                        os.path.join(OPATH, f))
+                        os.path.join(OPATH, dirpath[len(OPATH) + 1:], f))
 
     except KeyboardInterrupt:
         # Ignore Ctrl+C
