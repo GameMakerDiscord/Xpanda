@@ -10,9 +10,9 @@
 /// +---------------------------+
 /// |+X|-X|+Y|-Y|+Z|-Z|None|None|
 /// +---------------------------+
-Vec2 xVec3ToCubeUv(Vec3 dir)
+float2 xVec3ToCubeUv(float3 dir)
 {
-	Vec3 dirAbs = abs(dir);
+	float3 dirAbs = abs(dir);
 
 	int i = dirAbs.x > dirAbs.y ?
 		(dirAbs.x > dirAbs.z ? 0 : 2) :
@@ -25,11 +25,11 @@ Vec2 xVec3ToCubeUv(Vec3 dir)
 	{
 		if (dir.x > 0.0)
 		{
-			uc = dir.y;
+			uc = -dir.y;
 		}
 		else
 		{
-			uc = -dir.y;
+			uc = +dir.y;
 			o = 1.0;
 		}
 		vc = -dir.z;
@@ -39,11 +39,11 @@ Vec2 xVec3ToCubeUv(Vec3 dir)
 	{
 		if (dir.y > 0.0)
 		{
-			uc = -dir.x;
+			uc = +dir.x;
 		}
 		else
 		{
-			uc = dir.x;
+			uc = -dir.x;
 			o = 1.0;
 		}
 		vc = -dir.z;
@@ -51,7 +51,7 @@ Vec2 xVec3ToCubeUv(Vec3 dir)
 	}
 	else
 	{
-		uc = dir.y;
+		uc = -dir.y;
 		if (dir.z > 0.0)
 		{
 			vc = +dir.x;
@@ -65,7 +65,7 @@ Vec2 xVec3ToCubeUv(Vec3 dir)
 	}
 
 	float invL = 1.0 / length(ma);
-	Vec2 uv = (Vec2(uc, vc) * invL + 1.0) * 0.5;
+	float2 uv = (float2(uc, vc) * invL + 1.0) * 0.5;
 	uv.x = (float(i) * 2.0 + o + uv.x) * 0.125;
 	return uv;
 }
