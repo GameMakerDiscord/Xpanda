@@ -8,10 +8,9 @@
 /// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
 float xSpecularD_GGX(float roughness, float NdotH)
 {
-	float r2 = roughness * roughness;
-	float a = NdotH * NdotH * (r2 - 1.0) + 1.0;
-	return r2 / (X_PI * a * a);
-	// return r2 / (X_PI * xPow2(xPow2(NdotH) * (r2 - 1.0) + 1.0);
+	float r = xPow4(roughness);
+	float a = NdotH * NdotH * (r - 1.0) + 1.0;
+	return r / (X_PI * a * a);
 }
 
 /// @desc Roughness remapping for analytic lights.
@@ -55,5 +54,5 @@ Vec3 xBRDF(Vec3 f0, float roughness, float NdotL, float NdotV, float NdotH)
 	Vec3 specular = xSpecularD_GGX(roughness, NdotH)
 		* xSpecularF_Schlick(f0, NdotV)
 		* xSpecularG_Schlick(xK_Analytic(roughness), NdotL, NdotH);
-	return specular / (4.0 * NdotL * NdotV);
+	return specular / max(4.0 * NdotL * NdotV, 0.001);
 }

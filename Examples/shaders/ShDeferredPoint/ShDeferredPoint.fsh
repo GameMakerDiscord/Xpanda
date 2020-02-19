@@ -334,7 +334,7 @@ void main(in VS_out IN, out PS_out OUT)
 			float NdotH = saturate(dot(N, H));
 
 			float3 specular = lightCol.rgb * xBRDF(f0, roughness, NdotL, NdotV, NdotH);
-			
+
 			OUT.Total = float4(base * lightCol * (1.0 - metalness) + specular, 1.0);
 			OUT.Specular = float4(specular, 1.0);
 		}
