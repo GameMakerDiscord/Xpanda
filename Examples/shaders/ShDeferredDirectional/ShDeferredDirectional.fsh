@@ -131,10 +131,9 @@ float xPow5(float x) { return (x * x * x * x * x); }
 /// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
 float xSpecularD_GGX(float roughness, float NdotH)
 {
-	float r2 = roughness * roughness;
-	float a = NdotH * NdotH * (r2 - 1.0) + 1.0;
-	return r2 / (X_PI * a * a);
-	// return r2 / (X_PI * xPow2(xPow2(NdotH) * (r2 - 1.0) + 1.0);
+	float r = xPow4(roughness);
+	float a = NdotH * NdotH * (r - 1.0) + 1.0;
+	return r / (X_PI * a * a);
 }
 
 /// @desc Roughness remapping for analytic lights.
@@ -162,9 +161,9 @@ float xSpecularG_Schlick(float k, float NdotL, float NdotV)
 
 /// @desc Fresnel
 /// @source https://en.wikipedia.org/wiki/Schlick%27s_approximation
-float3 xSpecularF_Schlick(float3 f0, float NdotV)
+float3 xSpecularF_Schlick(float3 f0, float VdotH)
 {
-	return f0 + (1.0 - f0) * xPow5(1.0 - NdotV); 
+	return f0 + (1.0 - f0) * xPow5(1.0 - VdotH); 
 }
 
 /// @desc Cook-Torrance microfacet specular shading
@@ -173,12 +172,12 @@ float3 xSpecularF_Schlick(float3 f0, float NdotV)
 ///       V = normalize(camera - vertex)
 ///       H = normalize(L + V)
 /// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
-float3 xBRDF(float3 f0, float roughness, float NdotL, float NdotV, float NdotH)
+float3 xBRDF(float3 f0, float roughness, float NdotL, float NdotV, float NdotH, float VdotH)
 {
 	float3 specular = xSpecularD_GGX(roughness, NdotH)
-		* xSpecularF_Schlick(f0, NdotV)
+		* xSpecularF_Schlick(f0, VdotH)
 		* xSpecularG_Schlick(xK_Analytic(roughness), NdotL, NdotH);
-	return specular / (4.0 * NdotL * NdotV);
+	return specular / max(4.0 * NdotL * NdotV, 0.001);
 }
 
 // include("BRDF.xsh")
@@ -229,10 +228,14 @@ void main(in VS_out IN, out PS_out OUT)
 
 		float NdotV = saturate(dot(N, V));
 		float NdotH = saturate(dot(N, H));
+		float VdotH = saturate(dot(V, H));
 
-		specular.rgb = lightCol.rgb * xBRDF(f0, roughness, NdotL, NdotV, NdotH);
+		specular.rgb = lightCol.rgb * xBRDF(f0, roughness, NdotL, NdotV, NdotH, VdotH);
 	}
 
-	OUT.Total = float4(base * lightCol * (1.0 - metalness), 1.0) + float4(specular.rgb, 0.0);
+	OUT.Total = float4(base * (lightCol / X_PI) * (1.0 - metalness), 1.0) + float4(specular.rgb, 0.0);
 	OUT.Specular = specular;
+
+	OUT.Total.rgb = pow(OUT.Total.rgb, 1.0 / 2.2);
+	OUT.Specular.rgb = pow(OUT.Specular.rgb, 1.0 / 2.2);
 }

@@ -38,9 +38,9 @@ float xSpecularG_Schlick(float k, float NdotL, float NdotV)
 
 /// @desc Fresnel
 /// @source https://en.wikipedia.org/wiki/Schlick%27s_approximation
-Vec3 xSpecularF_Schlick(Vec3 f0, float NdotV)
+Vec3 xSpecularF_Schlick(Vec3 f0, float VdotH)
 {
-	return f0 + (1.0 - f0) * xPow5(1.0 - NdotV); 
+	return f0 + (1.0 - f0) * xPow5(1.0 - VdotH); 
 }
 
 /// @desc Cook-Torrance microfacet specular shading
@@ -49,10 +49,10 @@ Vec3 xSpecularF_Schlick(Vec3 f0, float NdotV)
 ///       V = normalize(camera - vertex)
 ///       H = normalize(L + V)
 /// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
-Vec3 xBRDF(Vec3 f0, float roughness, float NdotL, float NdotV, float NdotH)
+Vec3 xBRDF(Vec3 f0, float roughness, float NdotL, float NdotV, float NdotH, float VdotH)
 {
 	Vec3 specular = xSpecularD_GGX(roughness, NdotH)
-		* xSpecularF_Schlick(f0, NdotV)
+		* xSpecularF_Schlick(f0, VdotH)
 		* xSpecularG_Schlick(xK_Analytic(roughness), NdotL, NdotH);
 	return specular / max(4.0 * NdotL * NdotV, 0.001);
 }
