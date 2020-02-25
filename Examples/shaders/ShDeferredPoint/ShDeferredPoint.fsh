@@ -208,6 +208,53 @@ float xShadowMapCompare(Texture2D shadowMap, float2 texel, float2 uv, float comp
 		f.x);
 }
 
+/// @source https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
+float xShadowMapPCF(Texture2D shadowMap, float2 texel, float2 uv, float compareZ)
+{
+	float shadow = 0.0;
+	for (float x = -1.0; x <= 1.0; x += 1.0)
+	{
+		for (float y = -1.0; y <= 1.0; y += 1.0)
+		{
+			shadow += xShadowMapCompare(shadowMap, texel, uv.xy + (float2(x, y) * texel), compareZ);
+		}
+	}
+	return (shadow / 9.0);
+}
+
+/// @source https://learnopengl.com/Advanced-Lighting/Shadows/Point-Shadows
+float xShadowMapPCFCube(Texture2D shadowMap, float2 texel, float3 dir, float compareZ)
+{
+	float3 samples[20];
+	samples[0] = float3( 1,  1,  1);
+	samples[1] = float3( 1, -1,  1);
+	samples[2] = float3(-1, -1,  1);
+	samples[3] = float3(-1,  1,  1);
+	samples[4] = float3( 1,  1, -1);
+	samples[5] = float3( 1, -1, -1);
+	samples[6] = float3(-1, -1, -1);
+	samples[7] = float3(-1,  1, -1);
+	samples[8] = float3( 1,  1,  0);
+	samples[9] = float3( 1, -1,  0);
+	samples[10] = float3(-1, -1,  0);
+	samples[11] = float3(-1,  1,  0);
+	samples[12] = float3( 1,  0,  1);
+	samples[13] = float3(-1,  0,  1);
+	samples[14] = float3( 1,  0, -1);
+	samples[15] = float3(-1,  0, -1);
+	samples[16] = float3( 0,  1,  1);
+	samples[17] = float3( 0, -1,  1);
+	samples[18] = float3( 0, -1, -1);
+	samples[19] = float3( 0,  1, -1);
+
+	float shadow = 0.0;
+	for (int i = 0; i < 20; ++i)
+	{
+		shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + samples[i]), compareZ);
+	}
+	return (shadow / 20.0);
+}
+
 // include("ShadowMapping.xsh")
 #pragma include("BRDF.xsh")
 #define X_PI   3.14159265359
@@ -318,7 +365,7 @@ void main(in VS_out IN, out PS_out OUT)
 			bias = clamp(bias, 0.0, 0.05);
 			float distLinear = saturate(dist / u_vLightPos.w);
 
-			float shadow = xShadowMapCompare(texShadowMap, u_vShadowMapTexel, xVec3ToCubeUv(-lightVec), distLinear - bias);
+			float shadow = xShadowMapPCFCube(texShadowMap, u_vShadowMapTexel, -lightVec, distLinear - bias);
 			float att = xPow2(saturate(1.0 - xPow4(distLinear))) / (xPow2(dist) + 1.0);
 
 			float3 lightCol = u_vLightCol.rgb * u_vLightCol.a * NdotL * att * (1.0 - shadow);

@@ -79,6 +79,109 @@ float2 xUnproject(float4 p)
 
 // include("Projecting.xsh")
 #pragma include("ShadowMapping.xsh")
+#define X_CUBEMAP_POS_X 0
+#define X_CUBEMAP_NEG_X 1
+#define X_CUBEMAP_POS_Y 2
+#define X_CUBEMAP_NEG_Y 3
+#define X_CUBEMAP_POS_Z 4
+#define X_CUBEMAP_NEG_Z 5
+
+/// @param dir Sampling direction vector in world-space.
+/// @return UV coordinates for the following cubemap layout:
+/// +---------------------------+
+/// |+X|-X|+Y|-Y|+Z|-Z|None|None|
+/// +---------------------------+
+float2 xVec3ToCubeUv(float3 dir)
+{
+	float3 dirAbs = abs(dir);
+
+	int i = dirAbs.x > dirAbs.y ?
+		(dirAbs.x > dirAbs.z ? 0 : 2) :
+		(dirAbs.y > dirAbs.z ? 1 : 2);
+
+	float uc, vc, ma;
+	float o = 0.0;
+
+	if (i == 0)
+	{
+		if (dir.x > 0.0)
+		{
+			uc = dir.y;
+		}
+		else
+		{
+			uc = -dir.y;
+			o = 1.0;
+		}
+		vc = -dir.z;
+		ma = dirAbs.x;
+	}
+	else if (i == 1)
+	{
+		if (dir.y > 0.0)
+		{
+			uc = -dir.x;
+		}
+		else
+		{
+			uc = dir.x;
+			o = 1.0;
+		}
+		vc = -dir.z;
+		ma = dirAbs.y;
+	}
+	else
+	{
+		uc = dir.y;
+		if (dir.z > 0.0)
+		{
+			vc = +dir.x;
+		}
+		else
+		{
+			vc = -dir.x;
+			o = 1.0;
+		}
+		ma = dirAbs.z;
+	}
+
+	float invL = 1.0 / length(ma);
+	float2 uv = (float2(uc, vc) * invL + 1.0) * 0.5;
+	uv.x = (float(i) * 2.0 + o + uv.x) * 0.125;
+	return uv;
+}
+
+/// @desc Gets normalized vector pointing to the UV on given cube side.
+float3 xCubeUvToVec3Normalized(float2 uv, int cubeSide)
+{
+	uv.x = 1.0 - uv.x;
+	uv = uv * 2.0 - 1.0;
+	if (cubeSide == X_CUBEMAP_POS_X)
+	{
+		return normalize(float3(+1.0, -uv.x, -uv.y));
+	}
+	if (cubeSide == X_CUBEMAP_NEG_X)
+	{
+		return normalize(float3(-1.0, uv.x, -uv.y));
+	}
+	if (cubeSide == X_CUBEMAP_POS_Y)
+	{
+		return normalize(float3(uv.x, +1.0, -uv.y));
+	}
+	if (cubeSide == X_CUBEMAP_NEG_Y)
+	{
+		return normalize(float3(-uv.x, -1.0, -uv.y));
+	}
+	if (cubeSide == X_CUBEMAP_POS_Z)
+	{
+		return normalize(float3(uv.x, uv.y, +1.0));
+	}
+	if (cubeSide == X_CUBEMAP_NEG_Z)
+	{
+		return normalize(float3(uv.x, -uv.y, -1.0));
+	}
+	return float3(0.0, 0.0, 0.0);
+}
 
 /// @source http://codeflow.org/entries/2013/feb/15/soft-shadow-mapping/
 float xShadowMapCompare(Texture2D shadowMap, float2 texel, float2 uv, float compareZ)
@@ -103,6 +206,53 @@ float xShadowMapCompare(Texture2D shadowMap, float2 texel, float2 uv, float comp
 		lerp(lb, lt, f.y),
 		lerp(rb, rt, f.y),
 		f.x);
+}
+
+/// @source https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
+float xShadowMapPCF(Texture2D shadowMap, float2 texel, float2 uv, float compareZ)
+{
+	float shadow = 0.0;
+	for (float x = -1.0; x <= 1.0; x += 1.0)
+	{
+		for (float y = -1.0; y <= 1.0; y += 1.0)
+		{
+			shadow += xShadowMapCompare(shadowMap, texel, uv.xy + (float2(x, y) * texel), compareZ);
+		}
+	}
+	return (shadow / 9.0);
+}
+
+/// @source https://learnopengl.com/Advanced-Lighting/Shadows/Point-Shadows
+float xShadowMapPCFCube(Texture2D shadowMap, float2 texel, float3 dir, float compareZ)
+{
+	float3 samples[20];
+	samples[0] = float3( 1,  1,  1);
+	samples[1] = float3( 1, -1,  1);
+	samples[2] = float3(-1, -1,  1);
+	samples[3] = float3(-1,  1,  1);
+	samples[4] = float3( 1,  1, -1);
+	samples[5] = float3( 1, -1, -1);
+	samples[6] = float3(-1, -1, -1);
+	samples[7] = float3(-1,  1, -1);
+	samples[8] = float3( 1,  1,  0);
+	samples[9] = float3( 1, -1,  0);
+	samples[10] = float3(-1, -1,  0);
+	samples[11] = float3(-1,  1,  0);
+	samples[12] = float3( 1,  0,  1);
+	samples[13] = float3(-1,  0,  1);
+	samples[14] = float3( 1,  0, -1);
+	samples[15] = float3(-1,  0, -1);
+	samples[16] = float3( 0,  1,  1);
+	samples[17] = float3( 0, -1,  1);
+	samples[18] = float3( 0, -1, -1);
+	samples[19] = float3( 0,  1, -1);
+
+	float shadow = 0.0;
+	for (int i = 0; i < 20; ++i)
+	{
+		shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + samples[i]), compareZ);
+	}
+	return (shadow / 20.0);
 }
 
 // include("ShadowMapping.xsh")
@@ -214,7 +364,9 @@ void main(in VS_out IN, out PS_out OUT)
 		float bias = 1.5;
 		float3 posShadowMap = mul(u_mShadowMap, float4(posWorld + N * bias, 1.0)).xyz * 0.5 + 0.5;
 		posShadowMap.y = 1.0 - posShadowMap.y;
-		shadow = xShadowMapCompare(texShadowMap, u_vShadowMapTexel, posShadowMap.xy, posShadowMap.z);
+
+		shadow = xShadowMapPCF(texShadowMap, u_vShadowMapTexel, posShadowMap.xy, posShadowMap.z);
+
 		const float lerpRegion = 2.0;
 		float shadowLerp = saturate((length(posView) - u_fShadowMapArea * 0.5 + lerpRegion) / lerpRegion);
 		shadow = lerp(shadow, 0.0, shadowLerp);
