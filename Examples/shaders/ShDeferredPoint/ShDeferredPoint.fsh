@@ -85,11 +85,13 @@ float2 xUnproject(float4 p)
 #define X_CUBEMAP_NEG_Z 5
 
 /// @param dir Sampling direction vector in world-space.
+/// @param texel Texel size on cube side. Used to inset uv coordinates for
+/// seamless filtering on edges. Use 0 to disable.
 /// @return UV coordinates for the following cubemap layout:
 /// +---------------------------+
 /// |+X|-X|+Y|-Y|+Z|-Z|None|None|
 /// +---------------------------+
-float2 xVec3ToCubeUv(float3 dir)
+float2 xVec3ToCubeUv(float3 dir, float2 texel)
 {
 	float3 dirAbs = abs(dir);
 
@@ -145,6 +147,7 @@ float2 xVec3ToCubeUv(float3 dir)
 
 	float invL = 1.0 / length(ma);
 	float2 uv = (float2(uc, vc) * invL + 1.0) * 0.5;
+	uv = lerp(texel * 1.5, 1.0 - texel * 1.5, uv);
 	uv.x = (float(i) * 2.0 + o + uv.x) * 0.125;
 	return uv;
 }
@@ -250,7 +253,7 @@ float xShadowMapPCFCube(Texture2D shadowMap, float2 texel, float3 dir, float com
 	float shadow = 0.0;
 	for (int i = 0; i < 20; ++i)
 	{
-		shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + samples[i]), compareZ);
+		shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + samples[i], texel), compareZ);
 	}
 	return (shadow / 20.0);
 }

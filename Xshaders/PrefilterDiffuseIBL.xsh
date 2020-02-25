@@ -3,7 +3,7 @@
 #pragma include("ImportanceSampling.xsh")
 
 /// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
-Vec3 xPrefilterIBL_Lambert(Texture2D cubemap, Vec3 R)
+Vec3 xPrefilterIBL_Lambert(Texture2D cubemap, Vec2 texel, Vec3 R)
 {
 	Vec3 N = R;
 	Vec3 V = R;
@@ -18,7 +18,7 @@ Vec3 xPrefilterIBL_Lambert(Texture2D cubemap, Vec3 R)
 		float NdotL = clamp(dot(N, L), 0.0, 1.0);
 		if (NdotL > 0.0)
 		{
-			prefilteredColor += Sample(cubemap, xVec3ToCubeUv(L)).rgb * NdotL;
+			prefilteredColor += Sample(cubemap, xVec3ToCubeUv(L, texel)).rgb * NdotL;
 			totalWeight += NdotL;
 		}
 	}

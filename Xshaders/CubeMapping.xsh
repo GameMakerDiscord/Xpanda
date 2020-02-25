@@ -6,11 +6,13 @@
 #define X_CUBEMAP_NEG_Z 5
 
 /// @param dir Sampling direction vector in world-space.
+/// @param texel Texel size on cube side. Used to inset uv coordinates for
+/// seamless filtering on edges. Use 0 to disable.
 /// @return UV coordinates for the following cubemap layout:
 /// +---------------------------+
 /// |+X|-X|+Y|-Y|+Z|-Z|None|None|
 /// +---------------------------+
-Vec2 xVec3ToCubeUv(Vec3 dir)
+Vec2 xVec3ToCubeUv(Vec3 dir, Vec2 texel)
 {
 	Vec3 dirAbs = abs(dir);
 
@@ -66,6 +68,7 @@ Vec2 xVec3ToCubeUv(Vec3 dir)
 
 	float invL = 1.0 / length(ma);
 	Vec2 uv = (Vec2(uc, vc) * invL + 1.0) * 0.5;
+	uv = lerp(texel * 1.5, 1.0 - texel * 1.5, uv);
 	uv.x = (float(i) * 2.0 + o + uv.x) * 0.125;
 	return uv;
 }
