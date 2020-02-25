@@ -68,7 +68,7 @@ float xShadowMapPCFCube(Texture2D shadowMap, Vec2 texel, Vec3 dir, float compare
 	float shadow = 0.0;
 	for (int i = 0; i < 20; ++i)
 	{
-		shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + samples[i], texel), compareZ);
+		shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + samples[i], Vec2(texel.y, texel.y)), compareZ);
 	}
 	return (shadow / 20.0);
 }
