@@ -43,32 +43,27 @@ float xShadowMapPCF(Texture2D shadowMap, Vec2 texel, Vec2 uv, float compareZ)
 /// @source https://learnopengl.com/Advanced-Lighting/Shadows/Point-Shadows
 float xShadowMapPCFCube(Texture2D shadowMap, Vec2 texel, Vec3 dir, float compareZ)
 {
-	Vec3 samples[20];
-	samples[0] = Vec3( 1,  1,  1);
-	samples[1] = Vec3( 1, -1,  1);
-	samples[2] = Vec3(-1, -1,  1);
-	samples[3] = Vec3(-1,  1,  1);
-	samples[4] = Vec3( 1,  1, -1);
-	samples[5] = Vec3( 1, -1, -1);
-	samples[6] = Vec3(-1, -1, -1);
-	samples[7] = Vec3(-1,  1, -1);
-	samples[8] = Vec3( 1,  1,  0);
-	samples[9] = Vec3( 1, -1,  0);
-	samples[10] = Vec3(-1, -1,  0);
-	samples[11] = Vec3(-1,  1,  0);
-	samples[12] = Vec3( 1,  0,  1);
-	samples[13] = Vec3(-1,  0,  1);
-	samples[14] = Vec3( 1,  0, -1);
-	samples[15] = Vec3(-1,  0, -1);
-	samples[16] = Vec3( 0,  1,  1);
-	samples[17] = Vec3( 0, -1,  1);
-	samples[18] = Vec3( 0, -1, -1);
-	samples[19] = Vec3( 0,  1, -1);
-
 	float shadow = 0.0;
-	for (int i = 0; i < 20; ++i)
-	{
-		shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + samples[i], Vec2(texel.y, texel.y)), compareZ);
-	}
+	Vec2 texelY = Vec2(texel.y, texel.y);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3( 1.0, -1.0,  1.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3( 1.0,  1.0,  1.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3(-1.0, -1.0,  1.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3(-1.0,  1.0,  1.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3( 1.0,  1.0, -1.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3( 1.0, -1.0, -1.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3(-1.0, -1.0, -1.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3(-1.0,  1.0, -1.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3( 1.0,  1.0,  0.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3( 1.0, -1.0,  0.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3(-1.0, -1.0,  0.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3(-1.0,  1.0,  0.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3( 1.0,  0.0,  1.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3(-1.0,  0.0,  1.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3( 1.0,  0.0, -1.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3(-1.0,  0.0, -1.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3( 0.0,  1.0,  1.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3( 0.0, -1.0,  1.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3( 0.0, -1.0, -1.0), texelY), compareZ);
+	shadow += xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir + Vec3( 0.0,  1.0, -1.0), texelY), compareZ);
 	return (shadow / 20.0);
 }
