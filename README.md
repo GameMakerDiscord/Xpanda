@@ -61,7 +61,7 @@ By default Xpanda defines following constants:
 Constant  | Value
 --------- | -----
 `XGLSL`   | `true` if the target language is GLSL, otherwise `false`
-`XHLSL`   | `true` if the target language is HLSL9 or HLSL9, otherwise `false`
+`XHLSL`   | `true` if the target language is HLSL9 or HLSL11, otherwise `false`
 `XHLSL9`  | `true` if the target language is HLSL9, otherwise `false`
 `XHLSL11` | `true` if the target language is HLSL11, otherwise `false`
 
