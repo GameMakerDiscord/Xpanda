@@ -166,4 +166,5 @@ Xpanda -h
 
 # Projects using Xpanda
 * [BBP](https://blueburn.cz/index.php?menu=bbp)
+* [Push3d](https://github.com/blueburn-cz/Push3d)
 * Your project here?
