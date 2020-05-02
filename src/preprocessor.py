@@ -211,6 +211,8 @@ class Preprocessor(object):
             if _next.type_ == Token.Type.ENDIF:
                 processed.append(self._consume(Token.Type.ENDIF))
                 break
+            elif _next.type_ == Token.Type.ELSE:
+                processed.append(self._consume(Token.Type.ELSE))
             else:
                 processed += self._process()
 
@@ -233,6 +235,8 @@ class Preprocessor(object):
             if _next.type_ == Token.Type.ENDIF:
                 processed.append(self._consume(Token.Type.ENDIF))
                 break
+            elif _next.type_ == Token.Type.ELSE:
+                processed.append(self._consume(Token.Type.ELSE))
             else:
                 processed += self._process()
 
