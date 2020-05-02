@@ -74,32 +74,32 @@ Vec2 xVec3ToCubeUv(Vec3 dir, Vec2 texel)
 }
 
 /// @desc Converts cubemap UV into a world-space vector.
-vec3 xCubeUvToVec3Normalized(vec2 uv, int cubeSide)
+Vec3 xCubeUvToVec3Normalized(Vec2 uv, int cubeSide)
 {
 	uv = uv * 2.0 - 1.0;
 	if (cubeSide == X_CUBEMAP_POS_X)
 	{
-		return normalize(vec3(+1.0, uv.x, -uv.y));
+		return normalize(Vec3(+1.0, uv.x, -uv.y));
 	}
 	if (cubeSide == X_CUBEMAP_NEG_X)
 	{
-		return normalize(vec3(-1.0, -uv.x, -uv.y));
+		return normalize(Vec3(-1.0, -uv.x, -uv.y));
 	}
 	if (cubeSide == X_CUBEMAP_POS_Y)
 	{
-		return normalize(vec3(-uv.x, +1.0, -uv.y));
+		return normalize(Vec3(-uv.x, +1.0, -uv.y));
 	}
 	if (cubeSide == X_CUBEMAP_NEG_Y)
 	{
-		return normalize(vec3(uv.x, -1.0, -uv.y));
+		return normalize(Vec3(uv.x, -1.0, -uv.y));
 	}
 	if (cubeSide == X_CUBEMAP_POS_Z)
 	{
-		return normalize(vec3(uv.y, uv.x, +1.0));
+		return normalize(Vec3(uv.y, uv.x, +1.0));
 	}
 	if (cubeSide == X_CUBEMAP_NEG_Z)
 	{
-		return normalize(vec3(-uv.y, uv.x, -1.0));
+		return normalize(Vec3(-uv.y, uv.x, -1.0));
 	}
-	return vec3(0.0, 0.0, 0.0);
+	return Vec3(0.0, 0.0, 0.0);
 }
