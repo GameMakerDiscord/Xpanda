@@ -10,7 +10,7 @@ Vec2 xIntegrateBRDF(float roughness, float NdotV)
 	Vec3 N = Vec3(0.0, 0.0, 1.0);
 	float a = 0.0;
 	float b = 0.0;
-	const int numSamples = 1024;
+	const int numSamples = 8192;
 	float k = xK_IBL(roughness);
 	for (int i = 0; i < numSamples; ++i)
 	{
