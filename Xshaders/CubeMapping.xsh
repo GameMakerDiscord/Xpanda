@@ -73,7 +73,7 @@ Vec2 xVec3ToCubeUv(Vec3 dir, Vec2 texel)
 	return uv;
 }
 
-/// @desc Gets normalized vector pointing to the UV on given cube side.
+/// @desc Converts cubemap UV into a world-space vector.
 vec3 xCubeUvToVec3Normalized(vec2 uv, int cubeSide)
 {
 	uv = uv * 2.0 - 1.0;
