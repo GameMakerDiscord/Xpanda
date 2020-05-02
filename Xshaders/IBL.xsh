@@ -13,5 +13,5 @@ Vec3 xSpecularIBL(Texture2D octahedron, Texture2D brdf, Vec3 f0, float roughness
 	float NdotV = clamp(dot(N, V), 0.0, 1.0);
 	vec3 R = 2.0 * dot(V, N) * N - V;
 	Vec2 envBRDF = Sample(brdf, Vec2(roughness, NdotV)).xy;
-	return xGammaToLinear(xDecodeRGBM(Sample(octahedron, xVec3ToOctahedronUv(R))) * (f0 * envBRDF.x + envBRDF.y));
+	return xGammaToLinear(xDecodeRGBM(texture2D(octahedron, xVec3ToOctahedronUv(R)))) * (f0 * envBRDF.x + envBRDF.y);
 }
