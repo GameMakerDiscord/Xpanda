@@ -68,7 +68,7 @@ Vec2 xVec3ToCubeUv(Vec3 dir, Vec2 texel)
 
 	float invL = 1.0 / length(ma);
 	Vec2 uv = (Vec2(uc, vc) * invL + 1.0) * 0.5;
-	uv = lerp(texel * 1.5, 1.0 - texel * 1.5, uv);
+	uv = Lerp(texel * 1.5, 1.0 - texel * 1.5, uv);
 	uv.x = (float(i) * 2.0 + o + uv.x) * 0.125;
 	return uv;
 }
