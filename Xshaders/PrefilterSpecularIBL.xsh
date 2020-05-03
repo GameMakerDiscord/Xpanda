@@ -2,7 +2,7 @@
 #pragma include("Hammersley2D.xsh")
 #pragma include("ImportanceSampling.xsh")
 #pragma include("RGBM.xsh")
-#pragma include("Gamma.xsh")
+#pragma include("Color.xsh")
 
 /// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
 Vec3 xPrefilterIBL_GGX(Texture2D cubemap, Vec2 texel, Vec3 R, float roughness)

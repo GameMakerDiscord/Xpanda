@@ -1,6 +1,6 @@
 #pragma include("OctahedronMapping.xsh")
 #pragma include("RGBM.xsh")
-#pragma include("Gamma.xsh")
+#pragma include("Color.xsh")
 
 Vec3 xDiffuseIBL(Texture2D octahedron, Vec3 N)
 {
