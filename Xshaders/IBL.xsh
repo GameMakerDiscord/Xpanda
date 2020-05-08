@@ -22,8 +22,8 @@ Vec3 xSpecularIBL(Texture2D octahedron, Vec2 texel, Texture2D brdf, Vec3 f0, flo
 	float rDiff = r - r2;
 
 	Vec2 uv0 = xVec3ToOctahedronUv(R);
-	uv0.x = (r2 + Lerp(texel, 1.0 - texel, uv0.x)) * s;
-	uv0.y = Lerp(texel, 1.0 - texel, uv0.y);
+	uv0.x = (r2 + Lerp(texel.x, 1.0 - texel.x, uv0.x)) * s;
+	uv0.y = Lerp(texel.y, 1.0 - texel.y, uv0.y);
 
 	Vec2 uv1 = uv0;
 	uv1.x = uv1.x + s;
