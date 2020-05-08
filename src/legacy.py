@@ -84,7 +84,7 @@ def clear(file):
             f.write(data)
 
 
-def expand(file, xshaders, out, lang):
+def expand(file, xshaders, xshaders_default, out, lang):
     """ Recursively expands pragma includes in the file. """
     data = ""
     includes = []
@@ -120,7 +120,16 @@ def expand(file, xshaders, out, lang):
                     if not include_fname in includes:
                         includes.append(include_fname)
                         level += 1
-                        do_expand(os.path.join(xshaders, include_fname))
+
+                        _fpath = os.path.join(xshaders, include_fname)
+                        if not os.path.exists(_fpath):
+                            _fpath = os.path.join(xshaders_default, include_fname)
+
+                        do_expand(_fpath)
+
+                        while data[-1].rstrip() == "":
+                            data = data[:-1]
+
                         data += "\n"
                         level -= 1
                         if level == 0:

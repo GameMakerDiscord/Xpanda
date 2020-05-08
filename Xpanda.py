@@ -47,11 +47,12 @@ if __name__ == "__main__":
     argc = len(sys.argv)
 
     PATH = None
-    XPATH = os.path.realpath(PATH_XSHADERS_DEFAULT)
+    XPATH = PATH_XSHADERS_DEFAULT
     OPATH = ""
     LANG_CURRENT = "glsl"
     ENV = {}
     MINIFY = False
+    CLEAN = False
 
     index = 1
     try:
@@ -61,6 +62,8 @@ if __name__ == "__main__":
             if arg == "-h":
                 print_help()
                 exit()
+            elif arg == "-c":
+                CLEAN = True
             elif arg == "--x":
                 index += 1
                 XPATH = os.path.realpath(sys.argv[index])
@@ -112,7 +115,9 @@ if __name__ == "__main__":
 
     def _process_file(fin, fout):
         clear(fin)
-        _lang = expand(fin, XPATH, fout, LANG_CURRENT)
+
+        if not CLEAN:
+            _lang = expand(fin, XPATH, os.path.realpath(PATH_XSHADERS_DEFAULT), fout, LANG_CURRENT)
 
         _env = copy.deepcopy(ENV)
         _env["XGLSL"] = _lang == "glsl"
