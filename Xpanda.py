@@ -10,14 +10,14 @@ from src.legacy import *
 from src.preprocessor import Preprocessor
 from src.tokenizer import tokenize
 
-PATH_XSHADERS_DEFAULT = "./Xshaders/"
+PATH_XSHADERS_DEFAULT = "Xshaders"
 
 LANG_DEFAULT = "glsl"
 
 
 def print_help():
     print((
-        "Usage: Xpanda [-h] PATH [--x EXTERNAL] [--o OUT] [--l LANG] [--m MINIFY] [CONSTANT=value ...]\n"
+        "Usage: Xpanda [-h] PATH [-c] [--x EXTERNAL] [--o OUT] [--l LANG] [--m MINIFY] [CONSTANT=value ...]\n"
         "\n"
         "Includes code from external files into your shaders.\n"
         "\n"
@@ -26,6 +26,7 @@ def print_help():
         "  -h             - Shows this help message.\n"
         "  PATH           - Path to the input file / folder.\n"
         "  EXTERNAL       - Path to the folder containing the external files (default is {external}).\n"
+        "  -c             - Do not expand, only clear existing includes.\n"
         "  OUT            - Output path. PATH is used if not specified.\n"
         "  LANG           - Fallback shader language when not specified by include.\n"
         "                   Options are: {langs} (default is {lang_def}).\n"
@@ -47,7 +48,8 @@ if __name__ == "__main__":
     argc = len(sys.argv)
 
     PATH = None
-    XPATH = PATH_XSHADERS_DEFAULT
+    XPATH_DEFAULT =  os.path.join(os.path.dirname(os.path.abspath(__file__)), PATH_XSHADERS_DEFAULT)
+    XPATH = XPATH_DEFAULT
     OPATH = ""
     LANG_CURRENT = "glsl"
     ENV = {}
@@ -117,7 +119,7 @@ if __name__ == "__main__":
         clear(fin)
 
         if not CLEAN:
-            _lang = expand(fin, XPATH, os.path.realpath(PATH_XSHADERS_DEFAULT), fout, LANG_CURRENT)
+            _lang = expand(fin, XPATH, XPATH_DEFAULT, fout, LANG_CURRENT)
 
         _env = copy.deepcopy(ENV)
         _env["XGLSL"] = _lang == "glsl"
