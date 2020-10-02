@@ -1,17 +1,10 @@
-struct VS_in
-{
-	float4 Position : POSITION0; // (x,y,z,w)
-	float2 TexCoord : TEXCOORD0; // (u,v)
-};
+attribute vec4 in_Position;
+attribute vec2 in_TextureCoord;
 
-struct VS_out
-{
-	float4 Position : SV_POSITION;
-	float2 TexCoord : TEXCOORD0;
-};
+varying vec2 v_vTexCoord;
 
-void main(in VS_in IN, out VS_out OUT)
+void main()
 {
-	OUT.Position = mul(gm_Matrices[MATRIX_WORLD_VIEW_PROJECTION], IN.Position);
-	OUT.TexCoord = IN.TexCoord;
+	gl_Position = gm_Matrices[MATRIX_WORLD_VIEW_PROJECTION] * in_Position;
+	v_vTexCoord = in_TextureCoord;
 }

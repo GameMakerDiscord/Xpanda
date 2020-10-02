@@ -1,0 +1,1 @@
+DrawTextShadow(8, 8, info);
