@@ -31,4 +31,6 @@ zfar = 8192;
 
 camera = camera_create();
 
-mouseLockAt = new Vec2();
+matrixViewInverse = undefined;
+
+mouseLockAt = ce_vec2_create(0);

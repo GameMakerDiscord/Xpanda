@@ -1,1 +1,1 @@
-DrawTextShadow(8, 8, info);
+draw_text_shadow(8, 8, info);
