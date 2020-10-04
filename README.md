@@ -167,4 +167,5 @@ Xpanda -h
 # Projects using Xpanda
 * [BBMOD](https://github.com/blueburn-cz/BBMOD/tree/dev)
 * [BBP](https://blueburn.cz/index.php?menu=bbp)
+* [CE](https://github.com/kraifpatrik/ce)
 * Your project here?
