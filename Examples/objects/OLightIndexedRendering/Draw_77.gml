@@ -40,27 +40,31 @@ gpu_set_zfunc(cmpfunc_greaterequal);
 var _modLight = modLight;
 var _index = 1;
 
+var _lightCount = instance_number(OLight);
+var _lights = array_create(_lightCount);
+var i = 0;
+
 with (OLight)
 {
-	index = _index++;
+	_lights[@ i++] = id;
 	indexChannel = 0;
-	var _channel = 0;
-	var _x = x;
-	var _y = y;
-	var _z = z;
-	var _radius = radius;
-	var _id = id;
-	with (OLight)
+}
+
+i = 0;
+repeat (_lightCount)
+{
+	var _l1 = _lights[i];
+	_l1.index = _index++;
+	var j = i + 1;
+	repeat (_lightCount - j)
 	{
-		if (id == _id)
+		var _l2 = _lights[j++];
+		if (point_distance_3d(_l1.x, _l1.y, _l1.z, _l2.x, _l2.y, _l2.z) < _l1.radius + _l2.radius)
 		{
-			continue;
-		}
-		if (point_distance_3d(x, y, z, _x, _y, _z) < radius + _radius)
-		{
-			indexChannel = ++_channel % 4;
+			++_l2.indexChannel;
 		}
 	}
+	++i;
 }
 
 var _shader = ShLightIndex;
@@ -128,7 +132,7 @@ var _blue = (_col >> 16) & 255;
 var _green = (_col >> 8) & 255;
 var _red = _col & 255;
 
-draw_text_shadow(window_mouse_get_x() + 16, window_mouse_get_y() + 16,
+ce_draw_text_shadow(window_mouse_get_x() + 16, window_mouse_get_y() + 16,
 	"red: " + string(_red)
 	+ "\ngreen: " + string(_green)
 	+ "\nblue: " + string(_blue)

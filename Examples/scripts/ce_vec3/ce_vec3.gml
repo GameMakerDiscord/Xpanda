@@ -62,8 +62,9 @@ function ce_vec3_ceil(_v)
 function ce_vec3_clamp_length(_v, _min, _max)
 {
 	gml_pragma("forceinline");
+	var _length = ce_vec3_length(_v);
 	ce_vec3_normalize(_v);
-	ce_vec3_scale(_v, clamp(ce_vec3_length(_v), _min, _max));
+	ce_vec3_scale(_v, clamp(_length, _min, _max));
 }
 
 /// @func ce_vec3_clone(_v)

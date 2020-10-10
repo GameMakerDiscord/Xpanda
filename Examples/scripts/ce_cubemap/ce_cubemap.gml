@@ -1,5 +1,6 @@
-/// @enum Enumeration of cube sides, compatible with Xpanda's cubemap layout.
-enum ECubeSide
+/// @enum Enumeration of cube sides, compatible with
+/// [Xpanda](https://github.com/GameMakerDiscord/Xpanda)'s cubemap layout.
+enum CE_ECubeSide
 {
 	/// @member Front cube side.
 	PosX,
@@ -17,29 +18,29 @@ enum ECubeSide
 	SIZE
 };
 
-/// @func Cubemap(_resolution)
+/// @func CE_Cubemap(_resolution)
 /// @desc A cubemap.
 /// @param {uint} _resolution A resolution of single cubemap side. Must be power
 /// of two.
-function Cubemap(_resolution) constructor
+function CE_Cubemap(_resolution) constructor
 {
 	/// @var {array} The position of the cubemap in the world space.
-	/// @see Cubemap.get_view_matrix
+	/// @see CE_Cubemap.get_view_matrix
 	Position = ce_vec3_create(0);
 
 	/// @var {real} Distance to the near clipping plane used in the cubemap's
 	/// projection matrix. Defaults to `0.1`.
-	/// @see Cubemap.get_projection_matrix
+	/// @see CE_Cubemap.get_projection_matrix
 	ZNear = 0.1;
 
 	/// @var {real} Distance to the far clipping plane used in the cubemap's
 	/// projection matrix. Defaults to `8192`.
-	/// @see Cubemap.get_projection_matrix
+	/// @see CE_Cubemap.get_projection_matrix
 	ZFar = 8192;
 
 	/// @var {array<surface>} An array of surfaces.
 	/// @readonly
-	Sides = array_create(ECubeSide.SIZE, noone);
+	Sides = array_create(CE_ECubeSide.SIZE, noone);
 
 	/// @var {surface} A single surface containing all cubemap sides.
 	/// This can be passed as uniform to a shader for cubemapping.
@@ -50,15 +51,15 @@ function Cubemap(_resolution) constructor
 	/// @readonly
 	Resolution = _resolution;
 
-	/// @var {ECubeSide} An index of a side that we are currently rendering to.
-	/// @see Cubemap.set_target
+	/// @var {CE_ECubeSide} An index of a side that we are currently rendering to.
+	/// @see CE_Cubemap.set_target
 	/// @private
 	RenderTo = 0;
 
 	/// @func get_surface(_side)
 	/// @desc Gets a surface for given cubemap side. If the surface is corrupted,
 	/// then a new one is created.
-	/// @param {ECubeSide} _side The cubemap side.
+	/// @param {CE_ECubeSide} _side The cubemap side.
 	/// @return {real} The surface.
 	static get_surface = function (_side) {
 		var _surOld = Sides[_side];
@@ -74,14 +75,14 @@ function Cubemap(_resolution) constructor
 	/// @desc Puts all faces of the cubemap into a single surface.
 	/// @param {uint} _clearColor
 	/// @param {real} _clearAlpha
-	/// @see Cubemap.Surface
+	/// @see CE_Cubemap.Surface
 	static to_single_surface = function (_clearColor, _clearAlpha) {
 		Surface = ce_surface_check(Surface, Resolution * 8, Resolution);
 		surface_set_target(Surface);
 		draw_clear_alpha(_clearColor, _clearAlpha);
 		var _x = 0;
 		var i = 0;
-		repeat (ECubeSide.SIZE)
+		repeat (CE_ECubeSide.SIZE)
 		{
 			draw_surface(Sides[i++], _x, 0);
 			_x += Resolution;
@@ -94,42 +95,43 @@ function Cubemap(_resolution) constructor
 	/// @param {ECubemapSide} side The cubemap side.
 	/// @return {matrix} The created view matrix.
 	static get_view_matrix = function (_side) {
-		var _negEye = Position.Scale(-1);
+		var _negEye = ce_vec3_clone(Position);
+		ce_vec3_scale(_negEye, -1);
 		var _x, _y, _z;
 
 		switch (_side)
 		{
-		case ECubeSide.PosX:
+		case CE_ECubeSide.PosX:
 			_x = ce_vec3_create(0, +1, 0);
 			_y = ce_vec3_create(0, 0, +1);
 			_z = ce_vec3_create(+1, 0, 0);
 			break;
 
-		case ECubeSide.NegX:
+		case CE_ECubeSide.NegX:
 			_x = ce_vec3_create(0, -1, 0);
 			_y = ce_vec3_create(0, 0, +1);
 			_z = ce_vec3_create(-1, 0, 0);
 			break;
 
-		case ECubeSide.PosY:
+		case CE_ECubeSide.PosY:
 			_x = ce_vec3_create(-1, 0, 0);
 			_y = ce_vec3_create(0, 0, +1);
 			_z = ce_vec3_create(0, +1, 0);
 			break;
 
-		case ECubeSide.NegY:
+		case CE_ECubeSide.NegY:
 			_x = ce_vec3_create(+1, 0, 0);
 			_y = ce_vec3_create(0, 0, +1);
 			_z = ce_vec3_create(0, -1, 0);
 			break;
 
-		case ECubeSide.PosZ:
+		case CE_ECubeSide.PosZ:
 			_x = ce_vec3_create(0, +1, 0);
 			_y = ce_vec3_create(-1, 0, 0);
 			_z = ce_vec3_create(0, 0, +1);
 			break;
 
-		case ECubeSide.NegZ:
+		case CE_ECubeSide.NegZ:
 			_x = ce_vec3_create(0, +1, 0);
 			_y = ce_vec3_create(+1, 0, 0);
 			_z = ce_vec3_create(0, 0, -1);
@@ -166,10 +168,10 @@ function Cubemap(_resolution) constructor
 	///     cubemap.reset_target();
 	/// }
 	/// ```
-	/// @see Cubemap.reset_target
+	/// @see CE_Cubemap.reset_target
 	static set_target = function () {
 		var _renderTo = RenderTo++;
-		if (_renderTo < ECubeSide.SIZE)
+		if (_renderTo < CE_ECubeSide.SIZE)
 		{
 			surface_set_target(get_surface(_renderTo));
 			matrix_set(matrix_view, get_view_matrix(_renderTo));
@@ -182,7 +184,7 @@ function Cubemap(_resolution) constructor
 
 	/// @func reset_target()
 	/// @desc Resets the render target.
-	/// @see Cubemap.set_target
+	/// @see CE_Cubemap.set_target
 	static reset_target = function () {
 		gml_pragma("forceinline");
 		surface_reset_target();
@@ -192,7 +194,7 @@ function Cubemap(_resolution) constructor
 	/// @desc Frees memory used by the cubemap.
 	static destroy = function () {
 		var i = 0;
-		repeat (ECubeSide.SIZE)
+		repeat (CE_ECubeSide.SIZE)
 		{
 			var _surface = Sides[i++];
 			if (surface_exists(_surface))

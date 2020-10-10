@@ -68,15 +68,13 @@ function ce_ds_map_extend_from_array(_map, _key_value_array)
 	}
 }
 
-/// @func ce_ds_map_find_key(map, value)
+/// @func ce_ds_map_find_key(_map, _value)
 /// @desc Finds the first key of the map that contains given value.
 /// @param {ds_map} _map The map to search in.
-/// @param {any} value The value that the key should contain.
+/// @param {any} _value The value that the key should contain.
 /// @return {string/real} The found key or `undefined`.
-function ce_ds_map_find_key(map, value)
+function ce_ds_map_find_key(_map, _value)
 {
-	var _map = argument0;
-	var _value = argument1;
 	var _key = ds_map_find_first(_map);
 	repeat (ds_map_size(_map))
 	{

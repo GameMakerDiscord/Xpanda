@@ -6,6 +6,7 @@
 /// @param {ds_list} _l2 The list to be added.
 function ce_ds_list_add_list(_l1, _l2)
 {
+	gml_pragma("forceinline");
 	ds_list_add(_l1, _l2);
 	ds_list_mark_as_list(_l1, ds_list_size(_l1) - 1);
 }
@@ -16,6 +17,7 @@ function ce_ds_list_add_list(_l1, _l2)
 /// @param {ds_list} _l2 The list to be added.
 function ce_ds_list_add_list_unique(_l1, _l2)
 {
+	gml_pragma("forceinline");
 	var _pos = ce_ds_list_add_unique(_l1, _l2);
 	if (_pos == -1)
 	{
@@ -29,6 +31,7 @@ function ce_ds_list_add_list_unique(_l1, _l2)
 /// @param {ds_map} _map The map to be added.
 function ce_ds_list_add_map(_list, _map)
 {
+	gml_pragma("forceinline");
 	ds_list_add(_list, _map);
 	ds_list_mark_as_map(_list, ds_list_size(_list) - 1);
 }
@@ -39,6 +42,7 @@ function ce_ds_list_add_map(_list, _map)
 /// @param {ds_map} _map The map to be added.
 function ce_ds_list_add_map_unique(_list, _map)
 {
+	gml_pragma("forceinline");
 	var _pos = ce_ds_list_add_unique(_list, _map);
 	if (_pos == -1)
 	{
@@ -53,6 +57,7 @@ function ce_ds_list_add_map_unique(_list, _map)
 /// @return {real} The index on which has the value been found or -1.
 function ce_ds_list_add_unique(_list, _value)
 {
+	gml_pragma("forceinline");
 	var _pos = ds_list_find_index(_list, _value);
 	if (_pos == -1)
 	{
@@ -76,10 +81,11 @@ function ce_ds_list_add_unique(_list, _value)
 /// ```
 function ce_ds_list_append(_l1, _l2)
 {
-	var _size = ds_list_size(_l2);
-	for (var i = 0; i < _size; ++i)
+	gml_pragma("forceinline");
+	var i = 0;
+	repeat (ds_list_size(_l2))
 	{
-		ds_list_add(_l1, _l2[| i]);
+		ds_list_add(_l1, _l2[| i++]);
 	}
 }
 
@@ -89,6 +95,7 @@ function ce_ds_list_append(_l1, _l2)
 /// @return {ds_list} The created list.
 function ce_ds_list_clone(_list)
 {
+	gml_pragma("forceinline");
 	var _clone = ds_list_create();
 	ds_list_copy(_clone, _list);
 	return _clone;
@@ -152,14 +159,15 @@ function ce_ds_list_distinct(_list)
 function ce_ds_list_filter(_list, _callback)
 {
 	var _filtered = ds_list_create();
-	var _size = ds_list_size(_list);
-	for (var i = 0; i < _size; ++i)
+	var i = 0;
+	repeat (ds_list_size(_list))
 	{
 		var _val = _list[| i];
-		if (script_execute(_callback, _val, i))
+		if (_callback(_val, i))
 		{
 			ds_list_add(_filtered, _val);
 		}
+		++i;
 	}
 	return _filtered;
 }
@@ -229,6 +237,7 @@ function ce_ds_list_insert_list(l1, pos, l2)
 /// @param {ds_map} _map The map to be inserted.
 function ce_ds_list_insert_map(_list, _pos, _map)
 {
+	gml_pragma("forceinline");
 	ds_list_insert(_list, _pos, _map);
 	ds_list_mark_as_map(_list, _pos);
 }
@@ -242,6 +251,7 @@ function ce_ds_list_insert_map(_list, _pos, _map)
 /// @return {real} The index on which has been the value found or -1.
 function ce_ds_list_insert_unique(_list, _value, _pos)
 {
+	gml_pragma("forceinline");
 	var _index = ds_list_find_index(_list, _value);
 	if (_index == -1)
 	{
@@ -341,10 +351,10 @@ function ce_ds_list_reduce(_list, _callback)
 {
 	var i = 0;
 	var _accumulator = (argument_count > 2) ? argument[2] : _list[| i++];
-	var _size = ds_list_size(_list);
-	for (/**/; i < _size; ++i)
+	repeat (ds_list_size(_list) - i)
 	{
 		_accumulator = script_execute(_callback, _accumulator, _list[| i], i);
+		++i;
 	}
 	return _accumulator;
 }
@@ -372,9 +382,10 @@ function ce_ds_list_reduce_right(_list, _callback)
 {
 	var i = ds_list_size(_list) - 1;
 	var _accumulator = (argument_count > 2) ? argument[2] : _list[| i--];
-	for (/**/; i >= 0; --i)
+	repeat (i + 1)
 	{
-		_accumulator = script_execute(_callback, _accumulator, _list[| i], i);
+		_accumulator = _callback(_accumulator, _list[| i], i);
+		--i;
 	}
 	return _accumulator;
 }
@@ -385,12 +396,14 @@ function ce_ds_list_reduce_right(_list, _callback)
 /// @param {any} _value The value to remove.
 function ce_ds_list_remove(_list, _value)
 {
-	for (var i = ds_list_size(_list) - 1; i >= 0; --i)
+	var i = ds_list_size(_list) - 1;
+	repeat (i + 1)
 	{
 		if (_list[| i] == _value)
 		{
 			ds_list_delete(_list, i);
 		}
+		--i;
 	}
 }
 
@@ -417,13 +430,15 @@ function ce_ds_list_remove_first(list, value)
 /// @param {bool} `true` if the value was in the list.
 function ce_ds_list_remove_last(_list, _value)
 {
-	for (var i = ds_list_size(_list) - 1; i >= 0; --i)
+	var i = ds_list_size(_list) - 1;
+	repeat (i + 1)
 	{
 		if (_list[| i] == _value)
 		{
 			ds_list_delete(_list, i);
 			return true;
 		}
+		--i;
 	}
 	return false;
 }
@@ -436,9 +451,10 @@ function ce_ds_list_remove_last(_list, _value)
 function ce_ds_list_reverse(_list)
 {
 	var _reversed = ds_list_create();
-	for (var i = ds_list_size(_list) - 1; i >= 0; --i)
+	var i = ds_list_size(_list) - 1;
+	repeat (i + 1)
 	{
-		ds_list_add(_reversed, _list[| i]);
+		ds_list_add(_reversed, _list[| i--]);
 	}
 	return _reversed;
 }
@@ -454,9 +470,10 @@ function ce_ds_list_slice(_list)
 	var _start = (argument_count > 1) ? argument[1] : 0;
 	var _end = (argument_count > 2) ? argument[2] : ds_list_size(_list);
 	var _slice = ds_list_create();
-	for (var i = _start; i < _end; ++i)
+	var i = _start;
+	repeat (_end - _start)
 	{
-		ds_list_add(_slice, _list[| i]);
+		ds_list_add(_slice, _list[| i++]);
 	}
 	return _slice;
 }

@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Scripts",
-    "path": "folders/Scripts.yy",
+    "name": "Native",
+    "path": "folders/CE/Scripts/Native.yy",
   },
   "resourceVersion": "1.0",
-  "name": "ScrArray",
+  "name": "ce_native_array",
   "tags": [],
   "resourceType": "GMScript",
 }

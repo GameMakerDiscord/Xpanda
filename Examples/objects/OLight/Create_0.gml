@@ -2,7 +2,7 @@
 /// @extends OObject3D
 event_inherited();
 
-radius = 5;
+radius = 2;
 
 index = 0;
 

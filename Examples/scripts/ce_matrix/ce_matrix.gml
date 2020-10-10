@@ -60,6 +60,17 @@ function ce_matrix_build_lookat(_from, _to, _up)
 		_up[0], _up[1], _up[2]);
 }
 
+/// @func ce_matrix_copy(_source, _target)
+/// @desc Copies a matrix.
+/// @param {matrix} _source The matrix to copy from.
+/// @param {matrix} _target The matrix to copy to.
+function ce_matrix_copy(_source, _target)
+{
+	gml_pragma("forceinline");
+	array_copy(_target, 0, _source, 0, 16);
+}
+
+
 /// @func ce_matrix_clone(_m)
 /// @desc Creates a clone of the matrix.
 /// @param {array} _m The matrix to create a clone of.
@@ -131,12 +142,13 @@ function ce_matrix_determinant(_m)
 	var _m13 = _m[13];
 	var _m14 = _m[14];
 	var _m15 = _m[15];
-	return(_m3*_m6*_m9*_m12-_m2*_m7*_m9*_m12-_m3*_m5*_m10*_m12+_m1*_m7*_m10*_m12
-		+_m2*_m5*_m11*_m12-_m1*_m6*_m11*_m12-_m3*_m6*_m8*_m13+_m2*_m7*_m8*_m13
-		+_m3*_m4*_m10*_m13-_m0*_m7*_m10*_m13-_m2*_m4*_m11*_m13+_m0*_m6*_m11*_m13
-		+_m3*_m5*_m8*_m14-_m1*_m7*_m8*_m14-_m3*_m4*_m9*_m14+_m0*_m7*_m9*_m14
-		+_m1*_m4*_m11*_m14-_m0*_m5*_m11*_m14-_m2*_m5*_m8*_m15+_m1*_m6*_m8*_m15
-		+_m2*_m4*_m9*_m15-_m0*_m6*_m9*_m15-_m1*_m4*_m10*_m15+_m0*_m5*_m10*_m15);
+	return (0
+		+ (_m3 * _m6 *  _m9 * _m12) - (_m2 * _m7 *  _m9 * _m12) - (_m3 * _m5 * _m10 * _m12) + (_m1 * _m7 * _m10 * _m12)
+		+ (_m2 * _m5 * _m11 * _m12) - (_m1 * _m6 * _m11 * _m12) - (_m3 * _m6 *  _m8 * _m13) + (_m2 * _m7 *  _m8 * _m13)
+		+ (_m3 * _m4 * _m10 * _m13) - (_m0 * _m7 * _m10 * _m13) - (_m2 * _m4 * _m11 * _m13) + (_m0 * _m6 * _m11 * _m13)
+		+ (_m3 * _m5 *  _m8 * _m14) - (_m1 * _m7 *  _m8 * _m14) - (_m3 * _m4 *  _m9 * _m14) + (_m0 * _m7 *  _m9 * _m14)
+		+ (_m1 * _m4 * _m11 * _m14) - (_m0 * _m5 * _m11 * _m14) - (_m2 * _m5 *  _m8 * _m15) + (_m1 * _m6 *  _m8 * _m15)
+		+ (_m2 * _m4 *  _m9 * _m15) - (_m0 * _m6 *  _m9 * _m15) - (_m1 * _m4 * _m10 * _m15) + (_m0 * _m5 * _m10 * _m15));
 }
 
 /// @func ce_matrix_inverse(_m)
@@ -145,7 +157,7 @@ function ce_matrix_determinant(_m)
 function ce_matrix_inverse(_m)
 {
 	gml_pragma("forceinline");
-	var _s = 1 / ce_matrix_determinant(_m);
+
 	var _m0 = _m[0];
 	var _m1 = _m[1];
 	var _m2 = _m[2];
@@ -162,22 +174,54 @@ function ce_matrix_inverse(_m)
 	var _m13 = _m[13];
 	var _m14 = _m[14];
 	var _m15 = _m[15];
-	_m[@ 0] = _s * (_m6 * _m11 * _m13 - _m7 * _m10 * _m13 + _m7 * _m9 * _m14 - _m5 * _m11 * _m14 - _m6 * _m9 * _m15 + _m5 * _m10 * _m15);
-	_m[@ 1] = _s * (_m3 * _m10 * _m13 - _m2 * _m11 * _m13 - _m3 * _m9 * _m14 + _m1 * _m11 * _m14 + _m2 * _m9 * _m15 - _m1 * _m10 * _m15);
-	_m[@ 2] = _s * (_m2 * _m7 * _m13 - _m3 * _m6 * _m13 + _m3 * _m5 * _m14 - _m1 * _m7 * _m14 - _m2 * _m5 * _m15 + _m1 * _m6 * _m15);
-	_m[@ 3] = _s * (_m3 * _m6 * _m9 - _m2 * _m7 * _m9 - _m3 * _m5 * _m10 + _m1 * _m7 * _m10 + _m2 * _m5 * _m11 - _m1 * _m6 * _m11);
-	_m[@ 4] = _s * (_m7 * _m10 * _m12 - _m6 * _m11 * _m12 - _m7 * _m8 * _m14 + _m4 * _m11 * _m14 + _m6 * _m8 * _m15 - _m4 * _m10 * _m15);
-	_m[@ 5] = _s * (_m2 * _m11 * _m12 - _m3 * _m10 * _m12 + _m3 * _m8 * _m14 - _m0 * _m11 * _m14 - _m2 * _m8 * _m15 + _m0 * _m10 * _m15);
-	_m[@ 6] = _s * (_m3 * _m6 * _m12 - _m2 * _m7 * _m12 - _m3 * _m4 * _m14 + _m0 * _m7 * _m14 + _m2 * _m4 * _m15 - _m0 * _m6 * _m15);
-	_m[@ 7] = _s * (_m2 * _m7 * _m8 - _m3 * _m6 * _m8 + _m3 * _m4 * _m10 - _m0 * _m7 * _m10 - _m2 * _m4 * _m11 + _m0 * _m6 * _m11);
-	_m[@ 8] = _s * (_m5 * _m11 * _m12 - _m7 * _m9 * _m12 + _m7 * _m8 * _m13 - _m4 * _m11 * _m13 - _m5 * _m8 * _m15 + _m4 * _m9 * _m15);
-	_m[@ 9] = _s * (_m3 * _m9 * _m12 - _m1 * _m11 * _m12 - _m3 * _m8 * _m13 + _m0 * _m11 * _m13 + _m1 * _m8 * _m15 - _m0 * _m9 * _m15);
-	_m[@ 10] = _s * (_m1 * _m7 * _m12 - _m3 * _m5 * _m12 + _m3 * _m4 * _m13 - _m0 * _m7 * _m13 - _m1 * _m4 * _m15 + _m0 * _m5 * _m15);
-	_m[@ 11] = _s * (_m3 * _m5 * _m8 - _m1 * _m7 * _m8 - _m3 * _m4 * _m9 + _m0 * _m7 * _m9 + _m1 * _m4 * _m11 - _m0 * _m5 * _m11);
-	_m[@ 12] = _s * (_m6 * _m9 * _m12 - _m5 * _m10 * _m12 - _m6 * _m8 * _m13 + _m4 * _m10 * _m13 + _m5 * _m8 * _m14 - _m4 * _m9 * _m14);
-	_m[@ 13] = _s * (_m1 * _m10 * _m12 - _m2 * _m9 * _m12 + _m2 * _m8 * _m13 - _m0 * _m10 * _m13 - _m1 * _m8 * _m14 + _m0 * _m9 * _m14);
-	_m[@ 14] = _s * (_m2 * _m5 * _m12 - _m1 * _m6 * _m12 - _m2 * _m4 * _m13 + _m0 * _m6 * _m13 + _m1 * _m4 * _m14 - _m0 * _m5 * _m14);
-	_m[@ 15] = _s * (_m1 * _m6 * _m8 - _m2 * _m5 * _m8 + _m2 * _m4 * _m9 - _m0 * _m6 * _m9 - _m1 * _m4 * _m10 + _m0 * _m5 * _m10);
+
+	var _determinant = (0
+		+ (_m3 * _m6 *  _m9 * _m12) - (_m2 * _m7 *  _m9 * _m12) - (_m3 * _m5 * _m10 * _m12) + (_m1 * _m7 * _m10 * _m12)
+		+ (_m2 * _m5 * _m11 * _m12) - (_m1 * _m6 * _m11 * _m12) - (_m3 * _m6 *  _m8 * _m13) + (_m2 * _m7 *  _m8 * _m13)
+		+ (_m3 * _m4 * _m10 * _m13) - (_m0 * _m7 * _m10 * _m13) - (_m2 * _m4 * _m11 * _m13) + (_m0 * _m6 * _m11 * _m13)
+		+ (_m3 * _m5 *  _m8 * _m14) - (_m1 * _m7 *  _m8 * _m14) - (_m3 * _m4 *  _m9 * _m14) + (_m0 * _m7 *  _m9 * _m14)
+		+ (_m1 * _m4 * _m11 * _m14) - (_m0 * _m5 * _m11 * _m14) - (_m2 * _m5 *  _m8 * _m15) + (_m1 * _m6 *  _m8 * _m15)
+		+ (_m2 * _m4 *  _m9 * _m15) - (_m0 * _m6 *  _m9 * _m15) - (_m1 * _m4 * _m10 * _m15) + (_m0 * _m5 * _m10 * _m15));
+
+	var _s = 1 / _determinant;
+	
+	_m[@  0] = _s * ((_m6 * _m11 * _m13) - (_m7 * _m10 * _m13) + (_m7 * _m9 * _m14) - (_m5 * _m11 * _m14) - (_m6 * _m9 * _m15) + (_m5 * _m10 * _m15));
+	_m[@  1] = _s * ((_m3 * _m10 * _m13) - (_m2 * _m11 * _m13) - (_m3 * _m9 * _m14) + (_m1 * _m11 * _m14) + (_m2 * _m9 * _m15) - (_m1 * _m10 * _m15));
+	_m[@  2] = _s * ((_m2 *  _m7 * _m13) - (_m3 *  _m6 * _m13) + (_m3 * _m5 * _m14) - (_m1 *  _m7 * _m14) - (_m2 * _m5 * _m15) + (_m1 *  _m6 * _m15));
+	_m[@  3] = _s * ((_m3 *  _m6 *  _m9) - (_m2 *  _m7 *  _m9) - (_m3 * _m5 * _m10) + (_m1 *  _m7 * _m10) + (_m2 * _m5 * _m11) - (_m1 *  _m6 * _m11));
+	_m[@  4] = _s * ((_m7 * _m10 * _m12) - (_m6 * _m11 * _m12) - (_m7 * _m8 * _m14) + (_m4 * _m11 * _m14) + (_m6 * _m8 * _m15) - (_m4 * _m10 * _m15));
+	_m[@  5] = _s * ((_m2 * _m11 * _m12) - (_m3 * _m10 * _m12) + (_m3 * _m8 * _m14) - (_m0 * _m11 * _m14) - (_m2 * _m8 * _m15) + (_m0 * _m10 * _m15));
+	_m[@  6] = _s * ((_m3 *  _m6 * _m12) - (_m2 *  _m7 * _m12) - (_m3 * _m4 * _m14) + (_m0 *  _m7 * _m14) + (_m2 * _m4 * _m15) - (_m0 *  _m6 * _m15));
+	_m[@  7] = _s * ((_m2 *  _m7 *  _m8) - (_m3 *  _m6 *  _m8) + (_m3 * _m4 * _m10) - (_m0 *  _m7 * _m10) - (_m2 * _m4 * _m11) + (_m0 *  _m6 * _m11));
+	_m[@  8] = _s * ((_m5 * _m11 * _m12) - (_m7 *  _m9 * _m12) + (_m7 * _m8 * _m13) - (_m4 * _m11 * _m13) - (_m5 * _m8 * _m15) + (_m4 *  _m9 * _m15));
+	_m[@  9] = _s * ((_m3 *  _m9 * _m12) - (_m1 * _m11 * _m12) - (_m3 * _m8 * _m13) + (_m0 * _m11 * _m13) + (_m1 * _m8 * _m15) - (_m0 *  _m9 * _m15));
+	_m[@ 10] = _s * ((_m1 *  _m7 * _m12) - (_m3 *  _m5 * _m12) + (_m3 * _m4 * _m13) - (_m0 *  _m7 * _m13) - (_m1 * _m4 * _m15) + (_m0 *  _m5 * _m15));
+	_m[@ 11] = _s * ((_m3 *  _m5 *  _m8) - (_m1 *  _m7 *  _m8) - (_m3 * _m4 *  _m9) + (_m0 *  _m7 *  _m9) + (_m1 * _m4 * _m11) - (_m0 *  _m5 * _m11));
+	_m[@ 12] = _s * ((_m6 *  _m9 * _m12) - (_m5 * _m10 * _m12) - (_m6 * _m8 * _m13) + (_m4 * _m10 * _m13) + (_m5 * _m8 * _m14) - (_m4 *  _m9 * _m14));
+	_m[@ 13] = _s * ((_m1 * _m10 * _m12) - (_m2 *  _m9 * _m12) + (_m2 * _m8 * _m13) - (_m0 * _m10 * _m13) - (_m1 * _m8 * _m14) + (_m0 *  _m9 * _m14));
+	_m[@ 14] = _s * ((_m2 *  _m5 * _m12) - (_m1 *  _m6 * _m12) - (_m2 * _m4 * _m13) + (_m0 *  _m6 * _m13) + (_m1 * _m4 * _m14) - (_m0 *  _m5 * _m14));
+	_m[@ 15] = _s * ((_m1 *  _m6 *  _m8) - (_m2 *  _m5 *  _m8) + (_m2 * _m4 *  _m9) - (_m0 *  _m6 *  _m9) - (_m1 * _m4 * _m10) + (_m0 *  _m5 * _m10));
+}
+
+/// @func ce_matrix_multiply(_matrix, ...)
+/// @desc Multiplies any number of given matrices.
+/// @param {matrix} _matrix The first matrix.
+/// @return {matrix} The resulting matrix.
+/// @example
+/// Both following lines of code would produce the same result.
+/// ```gml
+/// ce_matrix_multiply(A, B, C);
+/// matrix_multiply(matrix_multiply(A, B), C);
+/// ```
+function ce_matrix_multiply(_matrix)
+{
+	gml_pragma("forceinline");
+	var i = 1;
+	repeat (argument_count - 1)
+	{
+		_matrix = matrix_multiply(_matrix, argument[i++]);
+	}
+	return _matrix;
 }
 
 /// @func ce_matrix_multiply_componentwise(_m1, _m2)
@@ -206,11 +250,11 @@ function ce_matrix_multiply_componentwise(_m1, _m2)
 	_m1[@ 15] *= _m2[@ 15];
 }
 
-/// @func ce_matrix_scale(_m, _s)
-/// @desc Scales the matrix by the value.
+/// @func ce_matrix_scale_componentwise(_m, _s)
+/// @desc Scales each component of a matrix by a value.
 /// @param {array} _m The matrix to scale.
 /// @param {real} _s The value to scale the matrix by.
-function ce_matrix_scale(_m, _s)
+function ce_matrix_scale_componentwise(_m, _s)
 {
 	gml_pragma("forceinline");
 	_m[@ 0] *= _s;
@@ -302,9 +346,208 @@ function ce_matrix_to_euler(_m)
 /// @param {array} _m The matrix to be transposed.
 function ce_matrix_transpose(_m)
 {
+	gml_pragma("forceinline");
 	var _c = ce_matrix_clone(_m);
-	_m[@ 0] = _c[ 0]; _m[@ 4] = _c[ 1]; _m[@ 8] = _c[ 2]; _m[@ 12] = _c[ 3];
-	_m[@ 1] = _c[ 4]; _m[@ 5] = _c[ 5]; _m[@ 9] = _c[ 6]; _m[@ 13] = _c[ 7];
+	_m[@ 0] = _c[ 0]; _m[@ 4] = _c[ 1]; _m[@  8] = _c[ 2]; _m[@ 12] = _c[ 3];
+	_m[@ 1] = _c[ 4]; _m[@ 5] = _c[ 5]; _m[@  9] = _c[ 6]; _m[@ 13] = _c[ 7];
 	_m[@ 2] = _c[ 8]; _m[@ 6] = _c[ 9]; _m[@ 10] = _c[10]; _m[@ 14] = _c[11];
 	_m[@ 3] = _c[12]; _m[@ 7] = _c[13]; _m[@ 11] = _c[14]; _m[@ 15] = _c[15];
+}
+
+/// @func ce_matrix_translate(_matrix, _x[, _y, _z])
+/// @desc Translates a matrix.
+/// @param {matrix} _matrix The matrix to translate.
+/// @param {real/real[]} _x The translation on an X axis or an array with
+/// `[x, y, z]` translation.
+/// @param {real} [_y] The translation on the Y axis. Not used when `_x` is an
+/// array.
+/// @param {real} [_z] The translation on the Z axis. Not used when `_x` is an
+/// array.
+/// @return {matrix} The resulting matrix.
+/// @example
+/// Both following lines of code would produce the same result.
+/// ```gml
+/// ce_matrix_translate(M, 1, 2, 3);
+/// ce_matrix_translate(M, [1, 2, 3]);
+/// ```
+function ce_matrix_translate(_matrix, _x)
+{
+	gml_pragma("forceinline");
+	var _y = (argument_count == 4) ? argument[2] : _x[1];
+	var _z = (argument_count == 4) ? argument[3] : _x[2];
+	_x = (argument_count == 4) ? _x : _x[0];
+	return matrix_multiply(_matrix,
+		matrix_build(_x, _y, _z, 0, 0, 0, 1, 1, 1));
+}
+
+/// @func ce_matrix_translate_x(_matrix, _translate)
+/// @desc Translates a matrix on the X axis.
+/// @param {matrix} _matrix The matrix to translate.
+/// @param {real} _translate A value to translate the matrix by.
+/// @return {matrix} The resulting matrix.
+function ce_matrix_translate_x(_matrix, _translate)
+{
+	gml_pragma("forceinline");
+	return matrix_multiply(_matrix,
+		matrix_build(_translate, 0, 0, 0, 0, 0, 1, 1, 1));
+}
+
+/// @func ce_matrix_translate_y(_matrix, _translate)
+/// @desc Translates a matrix on the Y axis.
+/// @param {matrix} _matrix The matrix to translate.
+/// @param {real} _translate A value to translate the matrix by.
+/// @return {matrix} The resulting matrix.
+function ce_matrix_translate_y(_matrix, _translate)
+{
+	gml_pragma("forceinline");
+	return matrix_multiply(_matrix,
+		matrix_build(0, _translate, 0, 0, 0, 0, 1, 1, 1));
+}
+
+/// @func ce_matrix_translate_z(_matrix, _translate)
+/// @desc Translates a matrix on the Z axis.
+/// @param {matrix} _matrix The matrix to translate.
+/// @param {real} _translate A value to translate the matrix by.
+/// @return {matrix} The resulting matrix.
+function ce_matrix_translate_z(_matrix, _translate)
+{
+	gml_pragma("forceinline");
+	return matrix_multiply(_matrix,
+		matrix_build(0, 0, _translate, 0, 0, 0, 1, 1, 1));
+}
+
+/// @func ce_matrix_rotate(_matrix, _x[, _y, _z])
+/// @desc Rotates a matrix.
+/// @param {matrix} _matrix The matrix to rotate.
+/// @param {real/real[]} _x Either rotation on the X axis, array with
+/// `[x, y, z]` rotation or an array with `[x, y, z, w]` quaternion.
+/// @param {real} [_y] The rotation on the Y axis. Not used when `_x` is an
+/// array.
+/// @param {real} [_z] The rotation on the Z axis. Not used when `_x` is an
+/// array.
+/// @return {matrix} The resulting matrix.
+/// @example
+/// Each of following lines of code would produce the same result.
+/// ```gml
+/// ce_matrix_rotate(M, 90, 0, 0);
+/// ce_matrix_rotate(M, [90, 0, 0]);
+/// ce_matrix_rotate(M, ce_quaternion_create_from_axisangle([1, 0, 0], 90));
+/// ```
+/// @note The order of rotations is the same as in `matrix_build`.
+/// @see ce_quaternion_create_from_axisangle
+function ce_matrix_rotate(_matrix, _x)
+{
+	gml_pragma("forceinline");
+	if (is_array(_x))
+	{
+		if (array_length(_x) == 4)
+		{
+			// Quaternion
+			return matrix_multiply(_matrix, ce_quaternion_to_matrix(_x));
+		}
+		// Array of angles
+		return matrix_multiply(_matrix,
+			matrix_build(0, 0, 0, _x[0], _x[1], _x[2], 1, 1, 1));
+	}
+	// Passed individually as arguments
+	return matrix_multiply(_matrix,
+		matrix_build(0, 0, 0, _x, argument[2], argument[3], 1, 1, 1));
+}
+
+/// @func ce_matrix_rotate_x(_matrix, _angle)
+/// @desc Rotates a matrix on the X axis.
+/// @param {matrix} _matrix The matrix to rotate.
+/// @param {real} _angle An angle in degrees.
+/// @return {matrix} The resulting matrix.
+function ce_matrix_rotate_x(_matrix, _angle)
+{
+	gml_pragma("forceinline");
+	return matrix_multiply(_matrix,
+		matrix_build(0, 0, 0, _angle, 0, 0, 1, 1, 1));
+}
+
+/// @func ce_matrix_rotate_y(_matrix, _angle)
+/// @desc Rotates a matrix on the Y axis.
+/// @param {matrix} _matrix The matrix to rotate.
+/// @param {real} _angle An angle in degrees.
+/// @return {matrix} The resulting matrix.
+function ce_matrix_rotate_y(_matrix, _angle)
+{
+	gml_pragma("forceinline");
+	return matrix_multiply(_matrix,
+		matrix_build(0, 0, 0, 0, _angle, 0, 1, 1, 1));
+}
+
+/// @func ce_matrix_rotate_z(_matrix, _angle)
+/// @desc Rotates a matrix on the Z axis.
+/// @param {matrix} _matrix The matrix to rotate.
+/// @param {real} _angle An angle in degrees.
+/// @return {matrix} The resulting matrix.
+function ce_matrix_rotate_z(_matrix, _angle)
+{
+	gml_pragma("forceinline");
+	return matrix_multiply(_matrix,
+		matrix_build(0, 0, 0, 0, 0, _angle, 1, 1, 1));
+}
+
+/// @func ce_matrix_scale(_matrix, _x[, _y, _z])
+/// @desc Scales a matrix.
+/// @param {matrix} _matrix The matrix to scale.
+/// @param {real/real[]} _x The scale on an X axis or an array with
+/// `[x, y, z]` scale.
+/// @param {real} [_y] The scale on the Y axis. Not used when `_x` is an
+/// array.
+/// @param {real} [_z] The scale on the Z axis. Not used when `_x` is an
+/// array.
+/// @return {matrix} The resulting matrix.
+/// @example
+/// Both following lines of code would produce the same result.
+/// ```gml
+/// ce_matrix_scale(M, 1, 2, 3);
+/// ce_matrix_scale(M, [1, 2, 3]);
+/// ```
+function ce_matrix_scale(_matrix, _x)
+{
+	gml_pragma("forceinline");
+	var _y = (argument_count == 4) ? argument[2] : _x[1];
+	var _z = (argument_count == 4) ? argument[3] : _x[2];
+	_x = (argument_count == 4) ? _x : _x[0];
+	return matrix_multiply(_matrix,
+		matrix_build(0, 0, 0, 0, 0, 0, _x, _y, _z));
+}
+
+/// @func ce_matrix_scale_x(_matrix, _scale)
+/// @desc Scales a matrix on the X axis.
+/// @param {matrix} _matrix The matrix to scale.
+/// @param {real} _scale A value to scale the matrix by.
+/// @return {matrix} The resulting matrix.
+function ce_matrix_scale_x(_matrix, _scale)
+{
+	gml_pragma("forceinline");
+	return matrix_multiply(_matrix,
+		matrix_build(0, 0, 0, 0, 0, 0, _scale, 1, 1));
+}
+
+/// @func ce_matrix_scale_y(_matrix, _scale)
+/// @desc Scales a matrix on the Y axis.
+/// @param {matrix} _matrix The matrix to scale.
+/// @param {real} _scale A value to scale the matrix by.
+/// @return {matrix} The resulting matrix.
+function ce_matrix_scale_y(_matrix, _scale)
+{
+	gml_pragma("forceinline");
+	return matrix_multiply(_matrix,
+		matrix_build(0, 0, 0, 0, 0, 0, 1, _scale, 1));
+}
+
+/// @func ce_matrix_scale_z(_matrix, _scale)
+/// @desc Scales a matrix on the Z axis.
+/// @param {matrix} _matrix The matrix to scale.
+/// @param {real} _scale A value to scale the matrix by.
+/// @return {matrix} The resulting matrix.
+function ce_matrix_scale_z(_matrix, _scale)
+{
+	gml_pragma("forceinline");
+	return matrix_multiply(_matrix,
+		matrix_build(0, 0, 0, 0, 0, 0, 1, 1, _scale));
 }

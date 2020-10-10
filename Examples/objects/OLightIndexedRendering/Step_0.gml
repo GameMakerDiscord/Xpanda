@@ -2,7 +2,7 @@ event_inherited();
 
 if (keyboard_check_pressed(vk_space))
 {
-	instance_create_3d(OLight, x, y, z);
+	ce_instance_create_3d(x, y, z, OLight);
 }
 else if (keyboard_check_pressed(vk_backspace))
 {

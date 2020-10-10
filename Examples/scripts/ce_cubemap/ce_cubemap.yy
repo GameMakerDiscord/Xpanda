@@ -3,10 +3,10 @@
   "isCompatibility": false,
   "parent": {
     "name": "Scripts",
-    "path": "folders/Scripts.yy",
+    "path": "folders/CE/Scripts.yy",
   },
   "resourceVersion": "1.0",
-  "name": "ScrCubemap",
+  "name": "ce_cubemap",
   "tags": [],
   "resourceType": "GMScript",
 }

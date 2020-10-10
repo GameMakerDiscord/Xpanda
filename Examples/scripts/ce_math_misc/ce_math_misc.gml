@@ -99,6 +99,7 @@ function ce_wrap(_number, _min, _max)
 	{
 		return _number % _max + _max;
 	}
+	return _number;
 }
 
 /// @func ce_wrap_angle(_angle)

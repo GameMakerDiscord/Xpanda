@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Scripts",
-    "path": "folders/Scripts.yy",
+    "name": "Utils",
+    "path": "folders/CE/Scripts/Utils.yy",
   },
   "resourceVersion": "1.0",
-  "name": "ScrInstanceUtils",
+  "name": "ce_instance_utils",
   "tags": [],
   "resourceType": "GMScript",
 }

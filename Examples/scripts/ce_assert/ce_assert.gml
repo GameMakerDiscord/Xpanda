@@ -3,7 +3,7 @@
 /// equals to `0` (`false`) and aborts the game.
 /// @param {any} _exp The expression to assert.
 /// @param {string} _msg The error message.
-/// @note Asserts work only when [CE_DEBUG](./CE_DEBUG.html) is set to `true`!
+/// @note Asserts work only when {@link CE_DEBUG} is set to `true`!
 /// This is handy when you have thoroughly tested your game and you don't want to
 /// show error messages in release builds.
 /// @see CE_DEBUG
@@ -33,7 +33,7 @@ function ce_assert(_exp, _msg)
 /// ce_assert_ds_exists(_map, ds_type_map,
 /// "This will abort the game just as expected.");
 /// ```
-/// @note Asserts work only when [CE_DEBUG](./CE_DEBUG.html) is set to `true`!
+/// @note Asserts work only when {@link CE_DEBUG} is set to `true`!
 /// This is handy when you have thoroughly tested your game and you don't want to
 /// show error messages in release builds.
 /// @see CE_DEBUG
@@ -53,7 +53,7 @@ function ce_assert_ds_exists(_id, _type, _msg)
 /// @param {any} _exp The expression to assert.
 /// @param {any} _val The expected value.
 /// @param {string} _msg The error message.
-/// @note Asserts work only when [CE_DEBUG](./CE_DEBUG.html) is set to `true`!
+/// @note Asserts work only when {@link CE_DEBUG} is set to `true`!
 /// This is handy when you have thoroughly tested your game and you don't want to
 /// show error messages in release builds.
 /// @see CE_DEBUG
@@ -74,7 +74,7 @@ function ce_assert_equal(_exp, _val, _msg)
 /// message and aborts the game.
 /// @param {any} _value The value to check.
 /// @param {string} _msg The error message.
-/// @note Asserts work only when [CE_DEBUG](./CE_DEBUG.html) is set to `true`!
+/// @note Asserts work only when {@link CE_DEBUG} is set to `true`!
 /// This is handy when you have thoroughly tested your game and you don't want to
 /// show error messages in release builds.
 /// @see CE_DEBUG
@@ -95,7 +95,7 @@ function ce_assert_is_int(_value, _msg)
 /// @param {any} _exp The expression to assert.
 /// @param {any} _val The expected value.
 /// @param {string} _msg The error message.
-/// @note Asserts work only when [CE_DEBUG](./CE_DEBUG.html) is set to `true`!
+/// @note Asserts work only when {@link CE_DEBUG} is set to `true`!
 /// This is handy when you have thoroughly tested your game and you don't want to
 /// show error messages in release builds.
 /// @see CE_DEBUG
