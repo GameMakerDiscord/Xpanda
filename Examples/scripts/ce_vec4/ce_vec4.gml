@@ -15,7 +15,7 @@ function ce_vec4_create()
 	{
 		return array_create(4, argument[0]);
 	}
-	if (argument_count == 3)
+	if (argument_count == 4)
 	{
 		return [argument[0], argument[1], argument[2], argument[3]];
 	}

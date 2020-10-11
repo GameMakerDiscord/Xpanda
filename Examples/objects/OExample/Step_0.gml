@@ -69,4 +69,6 @@ camera_set_proj_mat(camera, matrix_build_projection_perspective_fov(
 	-fov, -_windowWidth / _windowHeight, znear, zfar));
 
 // Check application surface size
-ce_surface_check(application_surface, _windowWidth, _windowHeight);
+ce_surface_check(application_surface,
+	_windowWidth * antialiasinig,
+	_windowHeight * antialiasinig);

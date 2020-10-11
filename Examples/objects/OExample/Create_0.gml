@@ -14,6 +14,9 @@ if (!variable_instance_exists(id, "info"))
 
 application_surface_enable(true);
 application_surface_draw_enable(false);
+antialiasinig = 2;
+
+display_set_gui_maximize(1, 1);
 
 gpu_set_zwriteenable(true);
 gpu_set_ztestenable(true);
