@@ -17,7 +17,7 @@
     {"id":{"name":"ShLightComplexity","path":"shaders/ShLightComplexity/ShLightComplexity.yy",},"order":4,},
     {"id":{"name":"SprColorGradingLUT","path":"sprites/SprColorGradingLUT/SprColorGradingLUT.yy",},"order":2,},
     {"id":{"name":"SprBestFitNormals","path":"sprites/SprBestFitNormals/SprBestFitNormals.yy",},"order":3,},
-    {"id":{"name":"ShDepthBuffer","path":"shaders/ShDepthBuffer/ShDepthBuffer.yy",},"order":4,},
+    {"id":{"name":"ShGBuffer","path":"shaders/ShGBuffer/ShGBuffer.yy",},"order":4,},
     {"id":{"name":"ce_map_utils","path":"scripts/ce_map_utils/ce_map_utils.yy",},"order":5,},
     {"id":{"name":"ScrModel","path":"scripts/ScrModel/ScrModel.yy",},"order":4,},
     {"id":{"name":"ce_matrix","path":"scripts/ce_matrix/ce_matrix.yy",},"order":1,},

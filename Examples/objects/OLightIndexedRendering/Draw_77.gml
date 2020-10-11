@@ -8,22 +8,29 @@ var _tanFovY = dtan(fov * 0.5);
 var _aspect = _windowWidth / _windowHeight;
 var _tanAspect = [_tanFovY * _aspect, -_tanFovY];
 
-// Depth buffer
-surDepthBuffer = ce_surface_check(surDepthBuffer, _surfaceWidth, _surfaceHeight);
+// G-Buffer
+surGBuffer = ce_surface_check(surGBuffer, _surfaceWidth, _surfaceHeight);
 
 surface_set_target(application_surface);
 draw_clear(c_red);
 
 camera_apply(camera);
 
-shader_set(ShDepthBuffer);
-shader_set_uniform_f(shader_get_uniform(ShDepthBuffer, "u_fZFar"), zfar);
+shader_set(ShGBuffer);
+shader_set_uniform_f(shader_get_uniform(ShGBuffer, "u_fZFar"), zfar);
+
+gpu_push_state();
+gpu_set_blendenable(false);
+
 model.submit(pr_trianglelist, sprite_get_texture(SprDefault, 0));
+
+gpu_pop_state();
+
 shader_reset();
 
 surface_reset_target();
 
-ce_surface_copy(application_surface, surDepthBuffer);
+ce_surface_copy(application_surface, surGBuffer);
 
 // Light index buffer
 surLightData = ce_surface_check(surLightData, 8, 256);
@@ -127,7 +134,7 @@ shader_set_uniform_f(_uZFar, zfar);
 shader_set_uniform_f_array(_uTanAspect, _tanAspect);
 shader_set_uniform_matrix_array(_uViewInverse, matrixViewInverse);
 
-var _depthBuffer = surface_get_texture(surDepthBuffer);
+var _depthBuffer = surface_get_texture(surGBuffer);
 
 with (OLight)
 {

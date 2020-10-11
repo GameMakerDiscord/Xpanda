@@ -5,7 +5,7 @@
     "path": "folders/Shaders.yy",
   },
   "resourceVersion": "1.0",
-  "name": "ShDepthBuffer",
+  "name": "ShGBuffer",
   "tags": [],
   "resourceType": "GMShader",
 }
