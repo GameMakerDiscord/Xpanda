@@ -1,7 +1,6 @@
 #pragma include("Cmp.xsh")
 
-/// @desc Encodes depth and a normal vector into RGBA, putting depth into the
-/// first 20 bits and the normal into the remaining 12 bits.
+/// @desc Encodes depth and a normal vector into RGBA.
 /// @param depth The depth to encode. Must be linearized.
 /// @param N The world-space normal vector to encode.
 /// @author TheSnidr

@@ -21,8 +21,7 @@ varying float v_fDepth;
 /// @desc Evalutes to 1.0 if a > b, otherwise to 0.0.
 #define xIsGreater(a, b) (((a) > (b)) ? 1.0 : 0.0)
 
-/// @desc Encodes depth and a normal vector into RGBA, putting depth into the
-/// first 20 bits and the normal into the remaining 12 bits.
+/// @desc Encodes depth and a normal vector into RGBA.
 /// @param depth The depth to encode. Must be linearized.
 /// @param N The world-space normal vector to encode.
 /// @author TheSnidr
