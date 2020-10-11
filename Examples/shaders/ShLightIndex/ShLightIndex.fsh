@@ -25,33 +25,35 @@ uniform vec4 u_vLight; // (x, y, z, radius)
 /// @desc Evalutes to 1.0 if a > b, otherwise to 0.0.
 #define xIsGreater(a, b) (((a) > (b)) ? 1.0 : 0.0)
 
-// Author: TheSnidr
-
+/// @desc Decodes depth from RGBA encoded using xEncodeDepth20Normal12.
+/// @author TheSnidr
 float xDecodeDepth20(vec4 enc)
 {
 	return enc.r + (enc.g / 255.0) + (fract(enc.a * 255.0 / 16.0) / 65025.0);
 }
 
+/// @desc Decodes world-space normal from RGBA encoded using xEncodeDepth20Normal12.
+/// @author TheSnidr
 vec3 xDecodeNormal12(vec4 enc)
 {
 	float val = enc.b * 255.0 + 256.0 * floor(enc.a * 255.0 / 16.0);
-	
+
 	//Special cases when vector points straight up or straight down
 	float up = xIsEqual(val, 4056.0);
 	float down = xIsEqual(val, 4057.0);
-	
+
 	float dim = floor(val / (26.0 * 26.0));
 	val -= dim * 26.0 * 26.0;
-	
+
 	float v1 = (0.5 + mod(val, 26.0)) / 26.0;
 	float v2 = (0.5 + floor(val / 26.0)) / 26.0;
-	
+
 	vec3 n = vec3(
 		mix(xIsEqual(dim, 0.0), v1, xIsGreater(dim, 1.0)),
 		mix(mix(xIsEqual(dim, 2.0), v1, xIsLess(dim, 2.0)), v2, xIsGreater(dim, 3.0)),
 		mix(v2, 1.0 - xIsEqual(dim, 5.0), xIsGreater(dim, 3.0)));
 	n = mix(n, vec3(0.5, 0.5, up), up + down);
-	
+
 	return normalize(n - vec3(0.5, 0.5, 0.5));
 }
 // include("DecodeDepth20Normal12.xsh")
