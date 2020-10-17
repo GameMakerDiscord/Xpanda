@@ -1,11 +1,19 @@
 // Source: http://graphicrants.blogspot.com/2009/04/rgbm-color-encoding.html
 
+#if XHLSL
+static const Mat3 xMatrixLogLuvEncode = Mat3(
+#else
 const Mat3 xMatrixLogLuvEncode = Mat3(
+#endif
 	0.2209, 0.3390, 0.4184,
 	0.1138, 0.6780, 0.7319,
 	0.0102, 0.1130, 0.2969);
 
+#if XHLSL
+static const Mat3 xMatrixLogLuvDecode = Mat3(
+#else
 const Mat3 xMatrixLogLuvDecode = Mat3(
+#endif
 	6.0014, -2.7008, -1.7996,
 	-1.3320, 3.1029, -5.7721,
 	0.3008, -1.0882, 5.6268);
