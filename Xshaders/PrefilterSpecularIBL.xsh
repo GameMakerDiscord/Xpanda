@@ -11,7 +11,7 @@ Vec3 xPrefilterIBL_GGX(Texture2D cubemap, Vec2 texel, Vec3 R, float roughness)
 	Vec3 V = R;
 	Vec3 prefilteredColor = Vec3(0.0, 0.0, 0.0);
 	float totalWeight = 0.0;
-	const int numSamples = 8192 * 4;
+	const int numSamples = 1024;
 	for (int i = 0; i < numSamples; ++i)
 	{
 		Vec2 Xi = xHammersley2D(i, numSamples);
