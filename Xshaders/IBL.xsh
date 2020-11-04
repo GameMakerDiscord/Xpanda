@@ -1,5 +1,5 @@
 #pragma include("OctahedronMapping.xsh")
-#pragma include("LogLUV.xsh")
+#pragma include("RGBM.xsh")
 #pragma include("Color.xsh")
 
 Vec3 xDiffuseIBL(Texture2D ibl, Vec2 texel, Vec3 N)
@@ -11,7 +11,7 @@ Vec3 xDiffuseIBL(Texture2D ibl, Vec2 texel, Vec3 N)
 	uv0.x = (r2 + Lerp(texel.x, 1.0 - texel.x, uv0.x)) * s;
 	uv0.y = Lerp(texel.y, 1.0 - texel.y, uv0.y);
 
-	return xDecodeLogLuv(texture2D(ibl, uv0));
+	return xGammaToLinear(xDecodeRGBM(texture2D(ibl, uv0)));
 }
 
 /// @source http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
@@ -35,8 +35,8 @@ Vec3 xSpecularIBL(Texture2D ibl, Vec2 texel, Texture2D brdf, Vec3 f0, float roug
 
 	Vec3 specular = f0 * envBRDF.x + envBRDF.y;
 
-	Vec3 col0 = xDecodeLogLuv(Sample(ibl, uv0)) * specular;
-	Vec3 col1 = xDecodeLogLuv(Sample(ibl, uv1)) * specular;
+	Vec3 col0 = xGammaToLinear(xDecodeRGBM(Sample(ibl, uv0))) * specular;
+	Vec3 col1 = xGammaToLinear(xDecodeRGBM(Sample(ibl, uv1))) * specular;
 
 	return Lerp(col0, col1, rDiff);
 }
