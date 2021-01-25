@@ -15,11 +15,11 @@ def minify(line: str) -> str:
 
     for char in line:
         if not is_string:
-            if char == "/" and char_last == "/" and not is_comment:
+            if char == "/" and char_last == "/" and is_comment == "":
                 # Start of single-line comment
                 is_comment = "/"
                 result = result[:-1]
-            elif char == "*" and char_last == "/" and not is_comment:
+            elif char == "*" and char_last == "/" and is_comment == "":
                 # Start of multi-line comment
                 is_comment = "*"
                 result = result[:-1]
@@ -57,9 +57,6 @@ def minify(line: str) -> str:
             elif is_string == char:
                 is_string = ""
 
-        try:
-            char_last = result[-1]
-        except:
-            pass
+        char_last = char
 
     return result.strip()
