@@ -1,1 +1,0 @@
-ce_draw_text_shadow(8, 8, info);

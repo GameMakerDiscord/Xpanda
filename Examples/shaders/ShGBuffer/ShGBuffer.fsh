@@ -1,85 +1,102 @@
-varying vec3 v_vNormal;
-varying vec2 v_vTexCoord;
-varying float v_fDepth;
-
-#pragma include("EncodeDepth20Normal12.xsh", "glsl")
-/// @desc Evalutes to 1.0 if a < b, otherwise to 0.0.
-#define xIsLess(a, b) (((a) < (b)) ? 1.0 : 0.0)
-
-/// @desc Evalutes to 1.0 if a <= b, otherwise to 0.0.
-#define xIsLessEqual(a, b) (((a) <= (b)) ? 1.0 : 0.0)
-
-/// @desc Evalutes to 1.0 if a == b, otherwise to 0.0.
-#define xIsEqual(a, b) (((a) == (b)) ? 1.0 : 0.0)
-
-/// @desc Evalutes to 1.0 if a != b, otherwise to 0.0.
-#define xIsNotEqual(a, b) (((a) != (b)) ? 1.0 : 0.0)
-
-/// @desc Evalutes to 1.0 if a >= b, otherwise to 0.0.
-#define xIsGreaterEqual(a, b) (((a) >= (b)) ? 1.0 : 0.0)
-
-/// @desc Evalutes to 1.0 if a > b, otherwise to 0.0.
-#define xIsGreater(a, b) (((a) > (b)) ? 1.0 : 0.0)
-
-/// @desc Encodes depth and a normal vector into RGBA.
-/// @param depth The depth to encode. Must be linearized.
-/// @param N The world-space normal vector to encode.
-/// @author TheSnidr
-vec4 xEncodeDepth20Normal12(float depth, vec3 N)
+struct VS_out
 {
-	vec4 enc;
-	// Encode normal to green channel
-	vec3 aN = abs(N);
-	float M = max(aN.x, max(aN.y, aN.z));
-	vec3 n = (N / M) * 0.5 + 0.5;
+	float4 Position  : SV_POSITION;
+	float3 Normal    : NORMAL0;
+	float3 Tangent   : TANGENT0;
+	float3 Bitangent : BINORMAL0;
+	float2 TexCoord  : TEXCOORD0;
+	float  Depth     : TEXCOORD1;
+};
 
-	// Figure out which primary direction the normal points in
-	float dim = xIsEqual(N.x, -M);
-	dim += (1.0 - abs(sign(dim))) * 2.0 * xIsEqual(N.y, M);
-	dim += (1.0 - abs(sign(dim))) * 3.0 * xIsEqual(N.y, -M);
-	dim += (1.0 - abs(sign(dim))) * 4.0 * xIsEqual(N.z, M);
-	dim += (1.0 - abs(sign(dim))) * 5.0 * xIsEqual(N.z, -M);
+struct PS_out
+{
+	float4 AlbedoAO             : SV_TARGET0;
+	float4 NormalRoughness      : SV_TARGET1;
+	float4 DepthMetalness       : SV_TARGET2;
+	float4 EmissiveTranslucency : SV_TARGET3;
+};
 
-	// Now that we've found the primary direction, we can pack the two remaining dimensions
-	float d1 = mix(n.y, n.x, step(2.0, dim)); // Save y in the 1st slot if the primary direction is x+ or x-. Otherwise save x
-	float d2 = mix(n.z, n.y, step(4.0, dim)); // Save z in the 2nd slot if the primary direction is along x or y. Otherwise save y
-	float num = 26.0; // 6 * 26 * 26 is 4056, which is less than 2^20 = 4096
+#define   texAlbedo     gm_BaseTextureObject
+Texture2D texNormal   : register(t1);
+Texture2D texMaterial : register(t2); // Roughness, metalness, translucency, AO
+Texture2D texEmissive : register(t3);
 
-	// Find the unique value for this vector, from 0 to 4056 (12 bits)
-	float encN = dim * num * num; // Save primary dimension
-	encN += floor(clamp(d1 * num - 0.5, 0.0, num - 1.0) + 0.5); // Save first secondary dimension
-	encN += floor(clamp(d2 * num - 0.5, 0.0, num - 1.0) + 0.5) * num; // Save second secondary dimension
-
-	// Special case: Up-vector is stored to unused index 4056
-	encN = mix(encN, 4056.0, xIsEqual(N.z, M) * xIsLess(abs(n.x - 0.5) + abs(n.y - 0.5), 0.01));
-
-	// Special case: Down-vector is stored to unused index 4057
-	encN = mix(encN, 4057.0, xIsEqual(N.z, -M) * xIsLess(abs(n.x - 0.5) + abs(n.y - 0.5), 0.01));
-
-	// Encode depth into 16 bits
-	float d = depth * 255.0;
-	enc.r = floor(d) / 255.0;
-	d = fract(d) * 255.0;
-	enc.g = floor(d) / 255.0;
-
-	// Encode normal into 8 bits
-	enc.b = mod(encN, 256.0) / 255.0;
-
-	// Encode 4 bits of depth and 4 bits of normal into alpha channel
-	enc.a = floor(fract(d) * 16.0);
-	enc.a += 16.0 * floor(encN / 256.0);
-	enc.a /= 255.0;
-
+#pragma include("DepthEncoding.xsh")
+/// @param d Linearized depth to encode.
+/// @return Encoded depth.
+/// @source http://aras-p.info/blog/2009/07/30/encoding-floats-to-rgba-the-final/
+float3 xEncodeDepth(float d)
+{
+	const float inv255 = 1.0 / 255.0;
+	float3 enc;
+	enc.x = d;
+	enc.y = d * 255.0;
+	enc.z = enc.y * 255.0;
+	enc = frac(enc);
+	float temp = enc.z * inv255;
+	enc.x -= enc.y * inv255;
+	enc.y -= temp;
+	enc.z -= temp;
 	return enc;
 }
-// include("EncodeDepth20Normal12.xsh")
 
-void main()
+/// @param c Encoded depth.
+/// @return Docoded linear depth.
+/// @source http://aras-p.info/blog/2009/07/30/encoding-floats-to-rgba-the-final/
+float xDecodeDepth(float3 c)
 {
-	if (texture2D(gm_BaseTexture, v_vTexCoord).a < 1.0)
+	const float inv255 = 1.0 / 255.0;
+	return c.x + (c.y * inv255) + (c.z * inv255 * inv255);
+}
+
+// include("DepthEncoding.xsh")
+#pragma include("Projecting.xsh")
+/// @param tanAspect (tanFovY*(screenWidth/screenHeight),-tanFovY), where
+///                  tanFovY = dtan(fov*0.5)
+/// @param texCoord  Sceen-space UV.
+/// @param depth     Scene depth at texCoord.
+/// @return Point projected to view-space.
+float3 xProject(float2 tanAspect, float2 texCoord, float depth)
+{
+	return float3(tanAspect * (texCoord * 2.0 - 1.0) * depth, depth);
+}
+
+/// @param p A point in clip space (transformed by projection matrix, but not
+///          normalized).
+/// @return P's UV coordinates on the screen.
+float2 xUnproject(float4 p)
+{
+	float2 uv = p.xy / p.w;
+	uv = uv * 0.5 + 0.5;
+	uv.y = 1.0 - uv.y;
+	return uv;
+}
+
+// include("Projecting.xsh")
+
+void main(in VS_out IN, out PS_out OUT)
+{
+	float4 base = texAlbedo.Sample(gm_BaseTexture, IN.TexCoord);
+	if (base.a < 1.0)
 	{
 		discard;
 	}
-	vec3 N = normalize(v_vNormal);
-	gl_FragColor = xEncodeDepth20Normal12(v_fDepth, N);
+
+	float3 N = normalize(texNormal.Sample(gm_BaseTexture, IN.TexCoord).xyz * 2.0 - 1.0);
+	N.y = -N.y;
+	N = normalize(mul(N, float3x3(IN.Tangent, IN.Bitangent, IN.Normal)));
+
+	float4 material = texMaterial.Sample(gm_BaseTexture, IN.TexCoord);
+
+	OUT.AlbedoAO.rgb = base;
+	OUT.AlbedoAO.a   = material.a;
+
+	OUT.NormalRoughness.rgb = N * 0.5 + 0.5;
+	OUT.NormalRoughness.a   = lerp(0.01, 0.99, material.r);
+
+	OUT.DepthMetalness.rgb = xEncodeDepth(IN.Depth);
+	OUT.DepthMetalness.a   = material.g;
+
+	OUT.EmissiveTranslucency   = texEmissive.Sample(gm_BaseTexture, IN.TexCoord);
+	OUT.EmissiveTranslucency.a = material.b;
 }

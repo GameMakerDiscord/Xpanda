@@ -1,7 +1,17 @@
-varying vec3 v_vNormal;
-varying vec2 v_vTexCoord;
-
-void main()
+struct VS_out
 {
-	gl_FragColor = texture2D(gm_BaseTexture, v_vTexCoord);
+	float4 Position : SV_POSITION;
+	float3 Normal   : NORMAL0;
+	float4 Color    : COLOR0;
+	float2 TexCoord : TEXCOORD0;
+};
+
+struct PS_out
+{
+	float4 Target0 : SV_TARGET0;
+};
+
+void main(in VS_out IN, out PS_out OUT)
+{
+	OUT.Target0 = IN.Color * gm_BaseTextureObject.Sample(gm_BaseTexture, IN.TexCoord);
 }
