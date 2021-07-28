@@ -12,9 +12,10 @@ Donate: [PayPal.Me](https://www.paypal.me/kraifpatrik/1usd)
 * [Building from source code](#building-from-source-code)
 * [Documentation and help](#documentation-and-help)
 * [Projects using Xpanda](#projects-using-xpanda)
+* [Links](#links)
 
 # Building from source code
-* Requires [Python 3](https://www.python.org/)
+**Requires [Python 3](https://www.python.org/)!**
 
 ```cmd
 git clone https://github.com/GameMakerDiscord/Xpanda
@@ -35,3 +36,7 @@ Online documentation for Xpanda can be found [here](https://kraifpatrik.com/docs
 * [BBP](https://blueburn.cz/index.php?menu=bbp)
 * [CE](https://github.com/kraifpatrik/ce)
 * Your project here?
+
+# Links
+* [Discord](https://discord.gg/ep2BGPm)
+* [Documentation](https://kraifpatrik.com/docs/xpanda)
