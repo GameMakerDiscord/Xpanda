@@ -48,7 +48,13 @@ if __name__ == "__main__":
     argc = len(sys.argv)
 
     PATH = None
-    XPATH_DEFAULT =  os.path.join(os.path.dirname(os.path.abspath(__file__)), PATH_XSHADERS_DEFAULT)
+
+    if getattr(sys, "frozen", False):
+        XPATH_DEFAULT = os.path.dirname(sys.executable)
+    else:
+        XPATH_DEFAULT = os.path.dirname(os.path.abspath(__file__))
+    XPATH_DEFAULT = os.path.join(XPATH_DEFAULT, PATH_XSHADERS_DEFAULT)
+
     XPATH = XPATH_DEFAULT
     OPATH = ""
     LANG_CURRENT = "glsl"
@@ -63,7 +69,7 @@ if __name__ == "__main__":
 
             if arg == "-h":
                 print_help()
-                exit()
+                sys.exit()
             elif arg == "-c":
                 CLEAN = True
             elif arg == "--x":
@@ -100,20 +106,20 @@ if __name__ == "__main__":
     except IndexError:
         print("ERROR: No value defined for argument {}!".format(
             sys.argv[index - 1]))
-        exit()
+        sys.exit()
     except Exception as e:
         print("ERROR:", e)
-        exit()
+        sys.exit()
 
     if PATH is None:
         print("Argument PATH must be a directory or a file! Use -h to show help message.")
-        exit()
+        sys.exit()
 
     OPATH = os.path.realpath(OPATH) if OPATH else PATH
 
     if LANG_CURRENT not in LANGS:
         print("Unknown language {}!".format(LANG_CURRENT))
-        exit()
+        sys.exit()
 
     def _process_file(fin, fout):
         clear(fin)

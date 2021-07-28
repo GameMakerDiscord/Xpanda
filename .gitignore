@@ -1,7 +1,15 @@
+# Local
 /.vscode/
 /env/
-/tests/
+/test/
 __pycache__/
-Thumbs.db 
+pip-selfcheck.json
 *.pyc
+
+# Pyinstaller
+/build/
+/dist/Xpanda.exe
+/dist/Xpanda.zip
+Xpanda.spec
+
 !.gitkeep

@@ -29,11 +29,14 @@ Donate: [PayPal.Me](https://www.paypal.me/kraifpatrik/1usd)
 
 ```cmd
 git clone https://github.com/GameMakerDiscord/Xpanda
-cd Xpanda
-pip3 install -r requirements.txt
+cd .\Xpanda
+python.exe -m venv env
+.\env\Scripts\Activate.ps1
+pip.exe install -r requirements.txt
+pyinstaller.exe --onefile Xpanda.py
 ```
 
-*It is recommended to add C:\path\to\Xpanda\bin into your PATH to be able to run Xpanda from anywhere.*
+*It is recommended to add C:\path\to\Xpanda\dist into your PATH to be able to run Xpanda from anywhere.*
 
 # Writing compatible shader code
 When writing includable shader code, you can use following Xpanda types / functions, which are automatically translated to their GLSL / HLSL equivalent.
@@ -161,7 +164,7 @@ C-like operators/keywords `&&`, `||`, `!`, `true`, `false` in expressions are au
 Xpanda has a just a few command line parameters. To help you get started, you can first run following command, which will display a help message. In this message you can find all parameters and their descriptions.
 
 ```cmd
-Xpanda -h
+Xpanda.exe -h
 ```
 
 # Projects using Xpanda
