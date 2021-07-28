@@ -12,4 +12,9 @@ pip-selfcheck.json
 /dist/Xpanda.zip
 Xpanda.spec
 
+# Documentation
+/Documentation/docs_build/
+/Documentation/docs_src/ScriptingAPI/
+/Documentation/docs_src/ScriptingAPI.md
+
 !.gitkeep

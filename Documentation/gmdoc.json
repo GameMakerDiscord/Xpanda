@@ -1,0 +1,27 @@
+{
+  "_version": 2,
+  "project": "",
+  "project_name": "Xpanda",
+  "version": "1.0.0",
+  "title": "Xpanda Docs",
+  "author": "Patrik Kraif",
+  "prefix": "",
+  "analytics": "",
+  "api": {
+    "rating": ""
+  },
+  "toc": {
+    "Xpanda Docs": "index.md",
+    "Features": "Features.md",
+    "Writing compatible shader code": "WritingCompatibleShaderCode.md",
+    "Constants": "Constants.md",
+    "Directives": {
+      "file": "Directives.md",
+      "pages": {
+        "Include": "Include.md",
+        "Branching": "Branching.md"
+      }
+    },
+    "Running Xpanda": "RunningXpanda.md"
+  }
+}
