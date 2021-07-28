@@ -1,6 +1,15 @@
-varying vec2 v_vTexCoord;
+struct VS_out
+{
+	float4 Position : SV_POSITION;
+	float2 TexCoord : TEXCOORD0;
+};
 
-uniform vec2 u_vTexel;
+struct PS_out
+{
+	float4 Blurred : SV_TARGET0;
+};
+
+uniform float2 u_vTexel;
 
 // The MIT License (MIT) Copyright (c) 2015 Jam3
 
@@ -22,23 +31,24 @@ uniform vec2 u_vTexel;
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/// @param texel `(1 / imageWidth, 1 / imageHeight) * direction`, where `direction`
-/// is `(1.0, 0.0)` for horizontal or `(0.0, 1.0)` vertical blur.
+/// @param texel `(1/imageWidth,1/imageHeight)*direction`, where
+///        `direction` is `(1.0,0.0)` for horizontal or `(0.0,1.0)` for
+///        vertical blur.
 /// @source https://github.com/Jam3/glsl-fast-gaussian-blur
-vec4 blur9(sampler2D image, vec2 uv, vec2 texel)
+float4 blur9(Texture2D image, float2 uv, float2 texel)
 {
-	vec4 color = vec4(0.0);
-	vec2 off1 = texel * 1.3846153846;
-	vec2 off2 = texel * 3.2307692308;
-	color += texture2D(image, uv) * 0.2270270270;
-	color += texture2D(image, uv + off1) * 0.3162162162;
-	color += texture2D(image, uv - off1) * 0.3162162162;
-	color += texture2D(image, uv + off2) * 0.0702702703;
-	color += texture2D(image, uv - off2) * 0.0702702703;
+	float4 color = float4(0.0, 0.0, 0.0, 0.0);
+	float2 off1 = texel * 1.3846153846;
+	float2 off2 = texel * 3.2307692308;
+	color += image.Sample(gm_BaseTexture, uv) * 0.2270270270;
+	color += image.Sample(gm_BaseTexture, uv + off1) * 0.3162162162;
+	color += image.Sample(gm_BaseTexture, uv - off1) * 0.3162162162;
+	color += image.Sample(gm_BaseTexture, uv + off2) * 0.0702702703;
+	color += image.Sample(gm_BaseTexture, uv - off2) * 0.0702702703;
 	return color;
 }
 
-void main()
+void main(in VS_out IN, out PS_out OUT)
 {
-	gl_FragColor = blur9(gm_BaseTexture, v_vTexCoord, u_vTexel);
+	OUT.Blurred = blur9(gm_BaseTextureObject, IN.TexCoord, u_vTexel);
 }
