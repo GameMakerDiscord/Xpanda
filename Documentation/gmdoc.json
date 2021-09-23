@@ -8,7 +8,7 @@
   "prefix": "",
   "analytics": "",
   "api": {
-    "rating": ""
+    "rating": "/api/v1/page_rating"
   },
   "toc": {
     "Xpanda Docs": "index.md",
