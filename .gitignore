@@ -6,10 +6,10 @@ __pycache__/
 pip-selfcheck.json
 *.pyc
 
-# Pyinstaller
+# Pyinstaller and py2exe
 /build/
-/dist/Xpanda.exe
-/dist/Xpanda.zip
+/dist/*
+!/dist/Xshaders/
 Xpanda.spec
 
 # Documentation

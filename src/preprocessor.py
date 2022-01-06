@@ -32,6 +32,12 @@ class Preprocessor(object):
     def _replace_vars(self, t: Token, python: bool = False) -> bool:
         val_orig = t.value
 
+        if python:
+            f = re.findall(r"defined\(([^)]+)\)", t.value)
+            for e in f:
+                if e.startswith("X_"):
+                    t.value = t.value.replace(f"defined({e})", "True" if e in self.env else "False")
+
         for k, v in self.env.items():
             if python:
                 _str = " {} ".format(str(v))
@@ -205,7 +211,7 @@ class Preprocessor(object):
             token.value = minify(token.value) + "\n"
 
         processed = [token]
-        
+
         while True:
             _next = self._peek()
             if _next.type_ == Token.Type.ENDIF:
@@ -229,7 +235,7 @@ class Preprocessor(object):
             token.value = minify(token.value) + "\n"
 
         processed = [token]
-        
+
         while True:
             _next = self._peek()
             if _next.type_ == Token.Type.ENDIF:
@@ -276,12 +282,12 @@ class Preprocessor(object):
             _ifdef = self._process_ifdef()
             if _ifdef:
                 processed += _ifdef
-                continue 
+                continue
 
             _ifndef = self._process_ifndef()
             if _ifndef:
                 processed += _ifndef
-                continue 
+                continue
 
             _code = self._process_code()
             if _code:

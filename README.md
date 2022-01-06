@@ -23,7 +23,7 @@ cd .\Xpanda
 python.exe -m venv env
 .\env\Scripts\Activate.ps1
 pip.exe install -r requirements.txt
-pyinstaller.exe --onefile Xpanda.py
+python.exe setup.py
 ```
 
 *It is recommended to add C:\path\to\Xpanda\dist into your PATH to be able to run Xpanda from anywhere.*
