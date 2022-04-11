@@ -34,7 +34,7 @@ Online documentation for Xpanda can be found [here](https://kraifpatrik.com/docs
 # Projects using Xpanda
 * [BBMOD](https://marketplace.yoyogames.com/assets/10210/bbmod-3)
 * [BBP](https://blueburn.cz/index.php?menu=bbp)
-* [CE](https://github.com/kraifpatrik/ce)
+* [CoreExtension](https://github.com/blueburncz/CoreExtension)
 * Your project here?
 
 # Links
