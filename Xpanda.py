@@ -122,6 +122,8 @@ if __name__ == "__main__":
         sys.exit()
 
     def _process_file(fin, fout):
+        print(f"Expanding {fin} to {fout}...")
+
         with open(fin, "r") as src:
             code = src.read()
         with open(fout, "w") as dest:
@@ -133,23 +135,15 @@ if __name__ == "__main__":
             return
 
         _env = copy.deepcopy(ENV)
+        _env["XGLSL"] = LANG_CURRENT == "glsl"
+        _env["XHLSL"] = LANG_CURRENT in ["hlsl9", "hlsl11"]
+        _env["XHLSL9"] = LANG_CURRENT == "hlsl9"
+        _env["XHLSL11"] = LANG_CURRENT == "hlsl11"
 
         tokens = tokenize(fout)
-        processed = Preprocessor(tokens, env=_env, minify=0).process()
+        processed = Preprocessor(tokens, XPATH, XPATH_DEFAULT, LANG_CURRENT, env=_env, minify=MINIFY).process()
         with open(fout, "w") as f:
-            f.write(processed)
-
-        _lang = expand(fout, XPATH, XPATH_DEFAULT, fout, LANG_CURRENT)
-
-        _env["XGLSL"] = _lang == "glsl"
-        _env["XHLSL"] = _lang in ["hlsl9", "hlsl11"]
-        _env["XHLSL9"] = _lang == "hlsl9"
-        _env["XHLSL11"] = _lang == "hlsl11"
-
-        tokens = tokenize(fout)
-        processed = Preprocessor(tokens, env=_env, minify=MINIFY).process()
-        with open(fout, "w") as f:
-            f.write(processed)
+            f.write(handle_compatibility(processed, LANG_CURRENT))
 
         print("-" * 80)
 
