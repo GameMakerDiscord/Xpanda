@@ -122,12 +122,24 @@ if __name__ == "__main__":
         sys.exit()
 
     def _process_file(fin, fout):
-        clear(fin)
+        with open(fin, "r") as src:
+            with open(fout, "w") as dest:
+                dest.write(src.read())
 
-        if not CLEAN:
-            _lang = expand(fin, XPATH, XPATH_DEFAULT, fout, LANG_CURRENT)
+        clear(fout)
+
+        if CLEAN:
+            return
 
         _env = copy.deepcopy(ENV)
+
+        tokens = tokenize(fout)
+        processed = Preprocessor(tokens, env=_env, minify=0).process()
+        with open(fout, "w") as f:
+            f.write(processed)
+
+        _lang = expand(fout, XPATH, XPATH_DEFAULT, fout, LANG_CURRENT)
+
         _env["XGLSL"] = _lang == "glsl"
         _env["XHLSL"] = _lang in ["hlsl9", "hlsl11"]
         _env["XHLSL9"] = _lang == "hlsl9"
@@ -137,6 +149,7 @@ if __name__ == "__main__":
         processed = Preprocessor(tokens, env=_env, minify=MINIFY).process()
         with open(fout, "w") as f:
             f.write(processed)
+
         print("-" * 80)
 
     try:
