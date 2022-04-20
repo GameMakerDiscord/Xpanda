@@ -123,8 +123,9 @@ if __name__ == "__main__":
 
     def _process_file(fin, fout):
         with open(fin, "r") as src:
-            with open(fout, "w") as dest:
-                dest.write(src.read())
+            code = src.read()
+        with open(fout, "w") as dest:
+            dest.write(code)
 
         clear(fout)
 
