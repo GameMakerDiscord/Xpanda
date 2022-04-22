@@ -8,8 +8,7 @@ pip-selfcheck.json
 
 # Pyinstaller and py2exe
 /build/
-/dist/*
-!/dist/Xshaders/
+/dist*/
 Xpanda.spec
 
 # Documentation
