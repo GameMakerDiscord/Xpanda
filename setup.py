@@ -16,7 +16,6 @@ setup(
     options={'py2exe': {
         'bundle_files': 1,
         'compressed': True,
-        # 'dist_dir': 'dist2/',
     }},
     console=['Xpanda.py'],
     zipfile=None,
