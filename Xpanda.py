@@ -8,6 +8,7 @@ import traceback
 
 from src.common import *
 from src.legacy import *
+from src.minifier import minify
 from src.tokenizer import make_tree, process_tree, tokenize
 
 PATH_XSHADERS_DEFAULT = "Xshaders"
@@ -146,6 +147,8 @@ if __name__ == "__main__":
         with open(fout, "w") as f:
             processed = handle_compatibility(processed, LANG_CURRENT)
             processed = re.sub(r"\n{3,}", "\n\n", processed)
+            if MINIFY:
+                processed = minify(processed)
             f.write(processed)
 
         print("-" * 80)
