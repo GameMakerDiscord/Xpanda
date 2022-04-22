@@ -2,25 +2,27 @@
 import os
 import re
 
-from enum import Enum
+from enum import Enum, auto
 
 from src.legacy import P_INCLUDE_START
 
 class Token(object):
     class Type(Enum):
-        CODE = 0
-        DIRECTIVE = 1
-        PRAGMA = 2
-        IF = 3
-        IFDEF = 4
-        IFNDEF = 5
-        ELSE = 6
-        ELIF = 7
-        ENDIF = 8
-        EOF = 9
+        CODE = auto()
+        DIRECTIVE = auto()
+        DEFINE = auto()
+        UNDEF = auto()
+        PRAGMA = auto()
+        IF = auto()
+        IFDEF = auto()
+        IFNDEF = auto()
+        ELSE = auto()
+        ELIF = auto()
+        ENDIF = auto()
+        EOF = auto()
         # Control nodes in token tree:
-        ROOT = 10
-        BRANCH = 11
+        ROOT = auto()
+        BRANCH = auto()
 
     def __init__(self, type_: int, value: str):
         self.type_ = type_
@@ -37,6 +39,10 @@ class Token(object):
 
     @staticmethod
     def directive_from_str(str_: str):
+        if str_ == "define":
+            return Token.Type.DEFINE
+        if str_ == "undef":
+            return Token.Type.UNDEF
         if str_ == "pragma":
             return Token.Type.PRAGMA
         if str_ == "if":
@@ -129,6 +135,14 @@ def make_tree(tokens: list) -> Token:
             continue
 
         if token.type_ == Token.Type.DIRECTIVE:
+            current.add(token)
+            continue
+
+        if token.type_ == Token.Type.DEFINE:
+            current.add(token)
+            continue
+
+        if token.type_ == Token.Type.UNDEF:
             current.add(token)
             continue
 
@@ -228,8 +242,17 @@ def process_tree(token: Token, env: dict, xshaders: str, xshaders_default: str) 
 
     def _eval_token(token: Token):
         value_backup = token.value
+        token.evaluated = None
 
-        if token.type_ in [Token.Type.ELSE, Token.Type.ENDIF]:
+        if token.type_ == Token.Type.IFDEF:
+            name = token.value.lstrip()[1:].split()[1]
+            if name.startswith("X_"):
+                token.evaluated = name in env
+        elif token.type_ == Token.Type.IFNDEF:
+            name = token.value.lstrip()[1:].split()[1]
+            if name.startswith("X_"):
+                token.evaluated = name not in env
+        elif token.type_ in [Token.Type.ELSE, Token.Type.ENDIF]:
             token.evaluated = True
         elif token.type_ in [Token.Type.IF, Token.Type.ELIF]:
             try:
@@ -240,14 +263,13 @@ def process_tree(token: Token, env: dict, xshaders: str, xshaders_default: str) 
                 token.value = value_backup
                 _replace_vars(token)
                 token.evaluated = None
-        else:
-            token.evaluated = None
 
         return token.evaluated
 
     def _process(token):
         nonlocal code
         nonlocal includes
+        nonlocal env
 
         if token.type_ == Token.Type.CODE:
             code += token.value
@@ -255,6 +277,26 @@ def process_tree(token: Token, env: dict, xshaders: str, xshaders_default: str) 
 
         if token.type_ == Token.Type.DIRECTIVE:
             code += token.value
+            return
+
+        if token.type_ == Token.Type.DEFINE:
+            code += token.value
+            m = re.match(r"\s*#\s*define\s*(?P<name>\w+)\s*(?P<value>[^\n]+)?", token.value)
+            if m:
+                name = m.group("name")
+                if name.startswith("X_"):
+                    value = m.group("value")
+                    value = "" if value is None else value
+                    env[name] = value
+            return
+
+        if token.type_ == Token.Type.UNDEF:
+            code += token.value
+            m = re.match(r"\s*#\s*undef\s*(?P<name>\w+)", token.value)
+            if m:
+                name = m.group("name")
+                if name.startswith("X_"):
+                    del env[name]
             return
 
         if token.type_ == Token.Type.PRAGMA:

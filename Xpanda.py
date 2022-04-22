@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import copy
 import os
+import re
 import sys
 import traceback
 
@@ -143,7 +144,9 @@ if __name__ == "__main__":
         tree = make_tree(tokens)
         processed = process_tree(tree, _env, XPATH, XPATH_DEFAULT)
         with open(fout, "w") as f:
-            f.write(handle_compatibility(processed, LANG_CURRENT))
+            processed = handle_compatibility(processed, LANG_CURRENT)
+            processed = re.sub(r"\n{3,}", "\n\n", processed)
+            f.write(processed)
 
         print("-" * 80)
 
