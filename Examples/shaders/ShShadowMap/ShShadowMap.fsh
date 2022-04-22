@@ -4,7 +4,7 @@ varying vec3 v_vPosWorld;
 uniform vec3  u_vLightPos;
 uniform float u_fClipFar;
 
-#pragma include("DepthEncoding.xsh", "glsl")
+#pragma include("DepthEncoding.xsh")
 /// @param d Linearized depth to encode.
 /// @return Encoded depth.
 /// @source http://aras-p.info/blog/2009/07/30/encoding-floats-to-rgba-the-final/

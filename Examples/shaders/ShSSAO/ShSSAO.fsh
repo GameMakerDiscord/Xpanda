@@ -26,7 +26,7 @@ uniform float u_fPower;                            //< Strength of the occlusion
 uniform float u_fRadius;                           //< Radius of the occlusion effect.
 uniform float u_fBias;                             //< Depth bias of the occlusion effect.
 
-#pragma include("DepthEncoding.xsh", "glsl")
+#pragma include("DepthEncoding.xsh")
 /// @param d Linearized depth to encode.
 /// @return Encoded depth.
 /// @source http://aras-p.info/blog/2009/07/30/encoding-floats-to-rgba-the-final/
@@ -55,7 +55,7 @@ float xDecodeDepth(vec3 c)
 }
 
 // include("DepthEncoding.xsh")
-#pragma include("Projecting.xsh", "glsl")
+#pragma include("Projecting.xsh")
 /// @param tanAspect (tanFovY*(screenWidth/screenHeight),-tanFovY), where
 ///                  tanFovY = dtan(fov*0.5)
 /// @param texCoord  Sceen-space UV.

@@ -3,7 +3,7 @@ varying vec2 v_vTexCoord;
 uniform vec2 u_vTexel;      // (1/screenWidth,1/screenHeight)
 uniform vec2 u_vScreenSize; // (screenWidth,screenHeight)
 
-#pragma include("YCbCr.xsh", "glsl")
+#pragma include("YCbCr.xsh")
 /// @desc Converts RGB space color to YCbCr space color.
 vec3 xRGBtoYCbCr(vec3 rgb)
 {

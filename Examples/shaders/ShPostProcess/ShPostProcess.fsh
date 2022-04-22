@@ -5,7 +5,7 @@ uniform float     u_fLutIndex;
 uniform vec2      u_vTexel;
 uniform float     u_fDistortion;
 
-#pragma include("ColorGrading.xsh", "glsl")
+#pragma include("ColorGrading.xsh")
 /// @param color The original RGB color.
 /// @param lut   Texture of color-grading lookup tables (256x256, each LUT is
 ///              256x16, placed in rows). Needs to have interpolation enabled!
@@ -27,7 +27,7 @@ vec3 xColorGrade(vec3 color, sampler2D lut, float index)
 }
 
 // include("ColorGrading.xsh")
-#pragma include("ChromaticAberration.xsh", "glsl")
+#pragma include("ChromaticAberration.xsh")
 /// @param direction  Direction of distortion.
 /// @param distortion Per-channel distortion factor.
 /// @source http://john-chapman-graphics.blogspot.cz/2013/02/pseudo-lens-flare.html

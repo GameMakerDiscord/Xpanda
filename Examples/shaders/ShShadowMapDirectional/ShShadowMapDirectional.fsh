@@ -1,7 +1,7 @@
 varying vec2  v_vTexCoord;
 varying float v_fDepth;
 
-#pragma include("DepthEncoding.xsh", "glsl")
+#pragma include("DepthEncoding.xsh")
 /// @param d Linearized depth to encode.
 /// @return Encoded depth.
 /// @source http://aras-p.info/blog/2009/07/30/encoding-floats-to-rgba-the-final/
