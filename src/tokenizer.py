@@ -246,8 +246,7 @@ def process_tree(token: Token, env: dict, xshaders: str, xshaders_default: str) 
 
         if token.type_ == Token.Type.IFDEF:
             name = token.value.lstrip()[1:].split()[1]
-            if name.startswith("X_"):
-                token.evaluated = name in env
+            token.evaluated = name in env
         elif token.type_ == Token.Type.IFNDEF:
             name = token.value.lstrip()[1:].split()[1]
             if name.startswith("X_"):
