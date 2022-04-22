@@ -7,8 +7,7 @@ import traceback
 
 from src.common import *
 from src.legacy import *
-from src.preprocessor import Preprocessor
-from src.tokenizer import tokenize
+from src.tokenizer import make_tree, process_tree, tokenize
 
 PATH_XSHADERS_DEFAULT = "Xshaders"
 
@@ -141,7 +140,8 @@ if __name__ == "__main__":
         _env["XHLSL11"] = LANG_CURRENT == "hlsl11"
 
         tokens = tokenize(fout)
-        processed = Preprocessor(tokens, XPATH, XPATH_DEFAULT, LANG_CURRENT, env=_env, minify=MINIFY).process()
+        tree = make_tree(tokens)
+        processed = process_tree(tree, _env, XPATH, XPATH_DEFAULT)
         with open(fout, "w") as f:
             f.write(handle_compatibility(processed, LANG_CURRENT))
 
