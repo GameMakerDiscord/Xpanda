@@ -226,6 +226,12 @@ float xShadowMapPCF(Texture2D shadowMap, float2 texel, float2 uv, float compareZ
 }
 
 /// @source https://learnopengl.com/Advanced-Lighting/Shadows/Point-Shadows
+float xShadowMapCube(Texture2D shadowMap, float2 texel, float3 dir, float compareZ)
+{
+	return xShadowMapCompare(shadowMap, texel, xVec3ToCubeUv(dir, texel.yy), compareZ);
+}
+
+/// @source https://learnopengl.com/Advanced-Lighting/Shadows/Point-Shadows
 float xShadowMapPCFCube(Texture2D shadowMap, float2 texel, float3 dir, float compareZ)
 {
 	float3 samples[20];
@@ -368,7 +374,7 @@ void main(in VS_out IN, out PS_out OUT)
 			bias = clamp(bias, 0.0, 0.05);
 			float distLinear = saturate(dist / u_vLightPos.w);
 
-			float shadow = xShadowMapPCFCube(texShadowMap, u_vShadowMapTexel, -lightVec, distLinear - bias);
+			float shadow = xShadowMapCube(texShadowMap, u_vShadowMapTexel, -lightVec, distLinear - bias);
 			float att = xPow2(saturate(1.0 - xPow4(distLinear))) / (xPow2(dist) + 1.0);
 
 			float3 lightCol = u_vLightCol.rgb * u_vLightCol.a * NdotL * att * (1.0 - shadow);
