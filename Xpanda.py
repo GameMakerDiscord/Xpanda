@@ -7,9 +7,9 @@ import sys
 import traceback
 
 from src.common import *
-from src.legacy import *
 from src.minifier import minify
-from src.tokenizer import make_tree, process_tree, tokenize
+from src.preprocessor import clear, handle_compatibility, process_tree
+from src.tokenizer import make_tree, tokenize
 
 PATH_XSHADERS_DEFAULT = "Xshaders"
 
