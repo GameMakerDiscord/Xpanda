@@ -32,7 +32,7 @@ python.exe setup.py
 Online documentation for Xpanda can be found [here](https://kraifpatrik.com/docs/xpanda). If you need further help with using Xpanda, you can find me on the [BlueBurn](https://blueburn.cz/) Discord server [here](https://discord.gg/ep2BGPm).
 
 # Projects using Xpanda
-* [BBMOD](https://marketplace.yoyogames.com/assets/10210/bbmod-3)
+* [BBMOD](https://blueburn.cz/bbmod)
 * [BBP](https://blueburn.cz/index.php?menu=bbp)
 * [CoreExtension](https://github.com/blueburncz/CoreExtension)
 * Your project here?
