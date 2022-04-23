@@ -19,6 +19,7 @@
       "file": "Directives.md",
       "pages": {
         "Include": "Include.md",
+        "Define and undef": "DefineAndUndef.md",
         "Branching": "Branching.md"
       }
     },
