@@ -1,5 +1,5 @@
 # Xpanda
-Welcome to the documentation of Xpanda, a shader preprocessor for GameMaker Studio 2!
+Welcome to the documentation of Xpanda, a shader preprocessor for GameMaker!
 
 ## Contents
 * [Features](Features.html)
