@@ -27,7 +27,7 @@ def clear(file):
         with open(file, "w") as f:
             f.write(data)
 
-def process_tree(token: Token, env: dict, xshaders: str, xshaders_default: str) -> str:
+def process_tree(token: Token, env: dict, xshaders: str, xshaders_default: str, clear_pragma_includes: bool) -> str:
     code = ""
     includes = []
 
@@ -138,7 +138,8 @@ def process_tree(token: Token, env: dict, xshaders: str, xshaders_default: str) 
                 if include_fname in includes:
                     return []
 
-                code += token.value
+                if not clear_pragma_includes:
+                    code += token.value
 
                 includes.append(include_fname)
 
@@ -150,8 +151,9 @@ def process_tree(token: Token, env: dict, xshaders: str, xshaders_default: str) 
                 tokens_new_tree = make_tree(tokens_new)
                 token.add(tokens_new_tree)
 
-                end_token = Token(Token.Type.CODE, (" " * indent) + f'// include("{include_fname}")\n')
-                token.add(end_token)
+                if not clear_pragma_includes:
+                    end_token = Token(Token.Type.CODE, (" " * indent) + f'// include("{include_fname}")\n')
+                    token.add(end_token)
 
                 for c in token.children:
                     _process(c)

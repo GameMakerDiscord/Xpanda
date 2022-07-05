@@ -18,16 +18,17 @@ LANG_DEFAULT = "glsl"
 
 def print_help():
     print((
-        "Usage: Xpanda [-h] PATH [-c] [--x EXTERNAL] [--o OUT] [--l LANG] [--m MINIFY] [CONSTANT=value ...]\n"
+        "Usage: Xpanda [-h] PATH [-c] [-ci] [--x EXTERNAL] [--o OUT] [--l LANG] [--m MINIFY] [CONSTANT=value ...]\n"
         "\n"
         "Includes code from external files into your shaders.\n"
         "\n"
         "Arguments:\n"
         "\n"
         "  -h             - Shows this help message.\n"
-        "  PATH           - Path to the input file / folder.\n"
-        "  EXTERNAL       - Path to the folder containing the external files (default is {external}).\n"
+        "  PATH           - Path to the input file/folder.\n"
         "  -c             - Do not expand, only clear existing includes.\n"
+        "  -ci            - Clear '#pragma include' lines from the output file.\n"
+        "  EXTERNAL       - Path to the folder containing the external files (default is {external}).\n"
         "  OUT            - Output path. PATH is used if not specified.\n"
         "  LANG           - Fallback shader language when not specified by include.\n"
         "                   Options are: {langs} (default is {lang_def}).\n"
@@ -62,6 +63,7 @@ if __name__ == "__main__":
     ENV = {}
     MINIFY = False
     CLEAN = False
+    CLEAR_PRAGMA_INCLUDES = False
 
     index = 1
     try:
@@ -73,6 +75,8 @@ if __name__ == "__main__":
                 sys.exit()
             elif arg == "-c":
                 CLEAN = True
+            elif arg == "-ci":
+                CLEAR_PRAGMA_INCLUDES = True
             elif arg == "--x":
                 index += 1
                 XPATH = os.path.realpath(sys.argv[index])
@@ -143,7 +147,7 @@ if __name__ == "__main__":
 
         tokens = tokenize(fout)
         tree = make_tree(tokens)
-        processed = process_tree(tree, _env, XPATH, XPATH_DEFAULT)
+        processed = process_tree(tree, _env, XPATH, XPATH_DEFAULT, CLEAR_PRAGMA_INCLUDES)
         with open(fout, "w") as f:
             processed = handle_compatibility(processed, LANG_CURRENT)
             processed = re.sub(r"\n{3,}", "\n\n", processed)
