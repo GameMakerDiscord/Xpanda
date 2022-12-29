@@ -15,6 +15,8 @@ Vec2 xUnproject(Vec4 p)
 {
 	Vec2 uv = p.xy / p.w;
 	uv = uv * 0.5 + 0.5;
+#if defined(_YY_HLSL11_) || defined(_YY_PSSL_)
 	uv.y = 1.0 - uv.y;
+#endif
 	return uv;
 }
