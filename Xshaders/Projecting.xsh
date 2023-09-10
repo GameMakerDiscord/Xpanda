@@ -5,6 +5,9 @@
 /// @return Point projected to view-space.
 Vec3 xProject(Vec2 tanAspect, Vec2 texCoord, float depth)
 {
+#if !(defined(_YY_HLSL11_) || defined(_YY_PSSL_))
+	tanAspect.y *= -1.0;
+#endif
 	return Vec3(tanAspect * (texCoord * 2.0 - 1.0) * depth, depth);
 }
 
