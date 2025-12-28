@@ -4,9 +4,10 @@
 ![License](https://img.shields.io/github/license/GameMakerDiscord/Xpanda)
 [![Discord](https://img.shields.io/discord/298884075585011713?label=Discord)](https://discord.gg/ep2BGPm)
 
-Maintained by: [kraifpatrik](https://github.com/kraifpatrik)
+Author: [kraifpatrik](https://github.com/kraifpatrik)
 
-Donate: [PayPal.Me](https://www.paypal.me/kraifpatrik/1usd)
+> [!WARNING]
+> This project is **no longer actively maintained** by the original author and is kept only for future reference!
 
 # Table of Contents
 * [Building from source code](#building-from-source-code)
@@ -35,7 +36,7 @@ Online documentation for Xpanda can be found [here](https://kraifpatrik.com/docs
 * [BBMOD](https://blueburn.cz/bbmod)
 * [BBP](https://blueburn.cz/index.php?menu=bbp)
 * [CoreExtension](https://github.com/blueburncz/CoreExtension)
-* Your project here?
+* ...
 
 # Links
 * [Discord](https://discord.gg/ep2BGPm)
