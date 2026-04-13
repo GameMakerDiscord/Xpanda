@@ -64,6 +64,6 @@ Vec3 xBRDF(Vec3 f0, float roughness, float NdotL, float NdotV, float NdotH, floa
 {
 	Vec3 specular = xSpecularD_GGX(roughness, NdotH)
 		* xSpecularF_Schlick(f0, VdotH)
-		* xSpecularG_Schlick(xK_Analytic(roughness), NdotL, NdotH);
+		* xSpecularG_Schlick(xK_Analytic(roughness), NdotL, NdotV);
 	return specular / ((4.0 * NdotL * NdotV) + 0.1);
 }
